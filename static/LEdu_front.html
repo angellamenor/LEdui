@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEdui</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/static/img/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+    <meta name="theme-color" content="#2B7A78">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/ledui.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="lang-switch" role="group" data-i18n-aria-label="lang.label">
+                <button type="button" data-lang="es" aria-pressed="true" title="Español">ES</button>
+                <button type="button" data-lang="en" aria-pressed="false" title="English">EN</button>
+            </div>
+            <div class="header-content">
+                <div class="logo">
+                    <img src="/static/logo-ledu2.png" alt="LEdui" style="width: 130px; height: 130px;">
+                </div>
+                <h1 data-i18n="app.title">Lectura Educativa Inclusiva - LEdui</h1>
+                <p class="subtitle" data-i18n="app.subtitle"></p>
+            </div>
+        </header>
+
+        <main class="content">
+            <!-- Caja de acceso, con pestañas informativas -->
+            <section id="authSection" class="auth-section auth-box">
+                <nav class="auth-tabs" role="tablist" data-i18n-aria-label="info.tabs_label">
+                    <button type="button" role="tab" aria-selected="true" data-info-tab="acceder" data-i18n="info.tab_access"></button>
+                    <button type="button" role="tab" aria-selected="false" data-info-tab="porque" data-i18n="info.tab_why"></button>
+                    <button type="button" role="tab" aria-selected="false" data-info-tab="reglas" data-i18n="info.tab_rules"></button>
+                    <button type="button" role="tab" aria-selected="false" data-info-tab="contacto" data-i18n="info.tab_contact"></button>
+                </nav>
+
+                <div class="info-panel" data-info-panel="acceder" role="tabpanel">
+                    <h2 data-i18n="auth.title"></h2>
+                    <p id="authSubtitle" style="text-align: center;" data-i18n="auth.subtitle"></p>
+
+                    <div id="accessKeyGroup" class="access-key-group" hidden>
+                        <label for="accessKey">
+                            <span data-i18n="auth.key_label"></span>
+                            <span class="required-indicator">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" id="accessKey" class="access-key-input"
+                                   data-i18n-placeholder="auth.key_placeholder" autocomplete="off">
+                            <button type="button" id="togglePassword" class="toggle-password"
+                                    data-i18n-aria-label="auth.toggle_key">👁️</button>
+                        </div>
+                        <div id="keyHint" class="key-hint neutral" data-i18n="auth.key_hint" aria-live="polite"></div>
+                    </div>
+
+                    <div class="google-signin-divider" data-i18n="auth.google_divider"></div>
+                    <div id="googleSigninWrapper" class="google-signin-wrapper disabled">
+                        <div id="googleButton" style="display: flex; justify-content: center;"></div>
+                    </div>
+                    <p class="no-code-note" data-i18n-html="info.no_code_html"></p>
+                    <div id="authError" class="error" role="alert"></div>
+                </div>
+
+                <div class="info-panel info-text" data-info-panel="porque" role="tabpanel" hidden>
+                    <p data-i18n="info.why_p1"></p>
+                    <p data-i18n="info.why_p2"></p>
+                    <img class="info-image" src="/static/img/dua-barreras.jpg" data-i18n-alt="info.why_img_alt" alt="" loading="lazy">
+                    <p data-i18n="info.why_p3"></p>
+                </div>
+
+                <div class="info-panel info-text" data-info-panel="reglas" role="tabpanel" hidden>
+                    <p data-i18n="info.rules_intro"></p>
+                    <img class="info-image" src="/static/img/ledui-estandares.jpg" data-i18n-alt="info.rules_img_alt" alt="" loading="lazy">
+                    <p data-i18n="info.rules_list_intro"></p>
+                    <ol class="rules-list">
+                        <li><strong data-i18n="info.r1_title"></strong> <span data-i18n="info.r1_text"></span></li>
+                        <li><strong data-i18n="info.r2_title"></strong> <span data-i18n="info.r2_text"></span></li>
+                        <li><strong data-i18n="info.r3_title"></strong> <span data-i18n="info.r3_text"></span></li>
+                        <li><strong data-i18n="info.r4_title"></strong> <span data-i18n="info.r4_text"></span></li>
+                        <li><strong data-i18n="info.r5_title"></strong> <span data-i18n="info.r5_text"></span></li>
+                        <li><strong data-i18n="info.r6_title"></strong> <span data-i18n="info.r6_text"></span></li>
+                        <li><strong data-i18n="info.r7_title"></strong> <span data-i18n="info.r7_text"></span></li>
+                        <li><strong data-i18n="info.r8_title"></strong> <span data-i18n="info.r8_text"></span></li>
+                        <li><strong data-i18n="info.r9_title"></strong> <span data-i18n="info.r9_text"></span></li>
+                        <li><strong data-i18n="info.r10_title"></strong> <span data-i18n="info.r10_text"></span></li>
+                    </ol>
+                </div>
+
+                <div class="info-panel info-text" data-info-panel="contacto" role="tabpanel" hidden>
+                    <div class="contact-head">
+                        <img class="contact-photo" src="/static/img/angel-luis-gonzalez.jpg" data-i18n-alt="info.photo_alt" alt="" loading="lazy">
+                        <div>
+                            <h3>Ángel Luis González Serrano</h3>
+                            <p class="contact-role" data-i18n="info.role"></p>
+                        </div>
+                    </div>
+                    <p data-i18n="info.bio1"></p>
+                    <p data-i18n="info.bio2"></p>
+                    <p data-i18n="info.awards_intro"></p>
+                    <ul class="plain-list">
+                        <li data-i18n="info.award1"></li>
+                        <li data-i18n="info.award2"></li>
+                        <li data-i18n="info.award3"></li>
+                        <li data-i18n="info.award4"></li>
+                        <li data-i18n="info.award5"></li>
+                        <li data-i18n="info.award6"></li>
+                        <li data-i18n="info.award7"></li>
+                    </ul>
+                    <p data-i18n-html="info.tfg_html"></p>
+                    <div class="contact-cta">
+                        <h3 data-i18n="info.cta_title"></h3>
+                        <p data-i18n="info.cta_text"></p>
+                        <a class="btn-new" href="mailto:angel@intell-i-gent.com">✉️ angel@intell-i-gent.com</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Usuario autenticado -->
+            <section id="userInfo" class="user-info">
+                <img id="userAvatar" src="" alt="" class="user-avatar" referrerpolicy="no-referrer">
+                <div class="user-details">
+                    <div class="user-name" id="userName"></div>
+                    <div class="user-email" id="userEmail"></div>
+                    <div class="user-stats">
+                        <div class="stat">
+                            <span class="stat-label" data-i18n="user.transformations"></span>
+                            <span class="stat-value" id="statTotal">0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-label" data-i18n="user.tokens"></span>
+                            <span class="stat-value" id="statTokens">0</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="btnLogout" class="btn-logout" data-i18n="user.logout"></button>
+            </section>
+
+            <div id="appSection" class="tabs-container">
+                <!-- Solo se muestra a administradores -->
+                <nav id="mainTabs" class="tabs-nav" role="tablist" hidden>
+                    <button type="button" class="tab-button active" role="tab" data-tab="mine" data-i18n="tabs.mine"></button>
+                    <button type="button" class="tab-button" role="tab" data-tab="admin" data-i18n="tabs.admin"></button>
+                </nav>
+
+                <!-- Mis transformaciones -->
+                <section id="tabMine" class="tab-content active" role="tabpanel">
+                    <div class="page-head">
+                        <div>
+                            <h2 data-i18n="mine.title"></h2>
+                            <p><span data-i18n="mine.subtitle"></span> · <span id="mineCount"></span></p>
+                        </div>
+                        <button type="button" class="btn-new" data-action="new" data-i18n="mine.new"></button>
+                    </div>
+
+                    <div id="error" class="error" role="alert"></div>
+
+                    <div id="transList" class="trans-list" aria-live="polite"></div>
+
+                    <div id="transEmpty" class="empty-state" hidden>
+                        <div class="empty-state-icon">📭</div>
+                        <h3 data-i18n="mine.empty_title"></h3>
+                        <p data-i18n="mine.empty_text"></p>
+                        <button type="button" class="btn-new" data-action="new" data-i18n="mine.new" style="margin-top: 20px;"></button>
+                    </div>
+                </section>
+
+                <!-- Administración -->
+                <section id="tabAdmin" class="tab-content" role="tabpanel">
+                    <div class="admin-header">
+                        <h2 data-i18n="admin.title"></h2>
+                        <p data-i18n="admin.subtitle"></p>
+                    </div>
+                    <div class="admin-card">
+                        <h3 data-i18n="admin.users"></h3>
+                        <div class="table-controls">
+                            <button type="button" id="btnReloadUsers" class="btn-secondary" data-i18n="admin.reload"></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="table.id"></th>
+                                        <th data-i18n="table.email"></th>
+                                        <th data-i18n="table.name"></th>
+                                        <th data-i18n="table.role"></th>
+                                        <th data-i18n="table.registered"></th>
+                                        <th data-i18n="table.transformations"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usuariosTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="admin-card">
+                        <h3 data-i18n="admin.transformations"></h3>
+                        <div class="table-controls">
+                            <button type="button" id="btnReloadTrans" class="btn-secondary" data-i18n="admin.reload"></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="table.id"></th>
+                                        <th data-i18n="table.user"></th>
+                                        <th data-i18n="table.title"></th>
+                                        <th data-i18n="table.level"></th>
+                                        <th data-i18n="table.language"></th>
+                                        <th data-i18n="table.duration"></th>
+                                        <th data-i18n="table.status"></th>
+                                        <th data-i18n="table.actions"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transformacionesTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Ventana: nueva transformación -->
+    <div id="newModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="newModalTitle">
+        <div class="modal-content modal-narrow">
+            <div class="modal-header">
+                <h3 id="newModalTitle" data-i18n="new.title"></h3>
+                <button type="button" class="btn-close" data-action="close-new" data-i18n-aria-label="common.close">✕</button>
+            </div>
+            <form id="newForm" class="modal-body" novalidate>
+                <div class="form-group">
+                    <label for="enunciado" data-i18n="new.statement"></label>
+                    <textarea id="enunciado" maxlength="15000" rows="9" data-i18n-placeholder="new.statement_placeholder"></textarea>
+                    <div id="charCount" class="char-count"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nivel" data-i18n="new.level"></label>
+                        <select id="nivel">
+                            <option value="primaria" data-i18n="levels.primaria"></option>
+                            <option value="secundaria" data-i18n="levels.secundaria" selected></option>
+                            <option value="bachillerato" data-i18n="levels.bachillerato"></option>
+                            <option value="fp" data-i18n="levels.fp"></option>
+                            <option value="universidad" data-i18n="levels.universidad"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="idiomaSalida" data-i18n="new.language"></label>
+                        <select id="idiomaSalida">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="lang-note" data-i18n="new.language_hint" style="margin: -8px 0 20px;"></p>
+                <div id="newError" class="error" role="alert"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" data-action="close-new" data-i18n="new.cancel"></button>
+                    <button type="submit" class="btn-primary btn-inline" data-i18n="new.submit"></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer onload="LEdui.onGoogleLoaded()"></script>
+</body>
+</html>

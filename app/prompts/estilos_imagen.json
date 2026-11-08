@@ -1,0 +1,7 @@
+{
+  "_comentario": "Sufijo que se añade al prompt de Gemini según el estilo elegido. Puedes editarlo o añadir estilos nuevos.",
+  "educativo": "professional educational style, clean composition, soft lighting, high quality",
+  "ilustrativo": "illustration style, vibrant colors, artistic rendering, engaging visual",
+  "realista": "photorealistic, natural lighting, high detail, professional photography",
+  "esquematico": "clean diagram style, minimalist, clear visual hierarchy, educational infographic"
+}
