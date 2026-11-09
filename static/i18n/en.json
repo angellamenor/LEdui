@@ -164,5 +164,7 @@
   "info.award7": "Mentes AMI Award 2026.",
   "info.rules_list_intro": "The 10 LEdui rules are:",
   "info.needs_p1": "Taken together, the rules address five groups of needs. Rules 1, 2 and 3 (clarity, structure and coherence) are the core of the standard and support dyslexia and other specific learning difficulties. Rule 2 also supports autistic students, because it anticipates what comes next, avoids information overload and keeps a predictable sequence, and students with ADHD, because it separates the essential from the secondary and fits each step into a single span of attention. Intellectual disability is covered by simplified language, clear structure and rule 5, which offers hints and examples in place of the teacher's help. Rules 4 and 8 address emotional regulation and frustration: they value effort, anticipate difficulties, present mistakes as part of the process and ask open questions with no single right answer.",
-  "detail.teacher_sub": "These are the rules that were applied the most, with an explanation so you can see what to improve in your next tasks."
+  "detail.teacher_sub": "These are the rules that were applied the most, with an explanation so you can see what to improve in your next tasks.",
+  "info.tab_video": "Demo video",
+  "info.video_title": "LEdui demo video"
 }

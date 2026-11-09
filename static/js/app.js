@@ -624,6 +624,7 @@
 
   function onLanguageChanged(lang) {
     updateLangButtons(lang);
+    updateDemoVideo();
     $('authSubtitle').textContent = t(state.config.requiere_clave ? 'auth.subtitle' : 'auth.subtitle_nokey');
     refreshKeyHint();
     renderGoogleButton();
@@ -883,9 +884,28 @@
 
   // ================================================================ pestañas de la caja de acceso
 
+  // Vídeo de demostración de YouTube según el idioma de la interfaz
+  const DEMO_VIDEOS = { es: 'veY3e7kjzFA', en: 'othEd50vC2I' };
+  let activeInfoTab = 'acceder';
+
+  function updateDemoVideo() {
+    const frame = $('demoVideo');
+    if (!frame) return;
+    if (activeInfoTab !== 'video') {
+      // Al salir de la pestaña se vacía el iframe para que el vídeo deje de sonar
+      if (frame.getAttribute('src')) frame.removeAttribute('src');
+      return;
+    }
+    const id = DEMO_VIDEOS[I18n.lang] || DEMO_VIDEOS.es;
+    const url = `https://www.youtube-nocookie.com/embed/${id}?rel=0`;
+    if (frame.getAttribute('src') !== url) frame.setAttribute('src', url);
+  }
+
   function showInfoTab(name) {
+    activeInfoTab = name;
     document.querySelectorAll('[data-info-tab]').forEach(btn => btn.setAttribute('aria-selected', String(btn.dataset.infoTab === name)));
     document.querySelectorAll('[data-info-panel]').forEach(panel => { panel.hidden = panel.dataset.infoPanel !== name; });
+    updateDemoVideo();
   }
 
   // ================================================================ arranque
