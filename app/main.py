@@ -38,6 +38,21 @@ def create_app() -> FastAPI:
         expose_headers=["Content-Disposition"],
     )
 
+    @app.middleware("http")
+    async def no_stale_frontend(request, call_next):
+        """
+        Obliga al navegador a revalidar la interfaz (HTML, JS, CSS, textos) en cada
+        carga. Sin esto, tras un despliegue podía mezclar un HTML nuevo con un
+        JavaScript antiguo guardado en caché y la página quedaba en blanco.
+        La revalidación usa ETag, así que si el fichero no ha cambiado no se vuelve
+        a descargar.
+        """
+        response = await call_next(request)
+        path = request.url.path
+        if path in ("/", "/demo") or path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-cache"
+        return response
+
     if settings.static_dir.is_dir():
         app.mount("/static", StaticFiles(directory=settings.static_dir), name="static")
 

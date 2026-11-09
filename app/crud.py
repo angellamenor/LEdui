@@ -1,7 +1,10 @@
 """Acceso a datos: guardado y lectura de transformaciones, pictogramas e imágenes."""
 from __future__ import annotations
 
+import html
 import logging
+import re
+from datetime import timezone
 from typing import Any
 
 from sqlalchemy import func
@@ -81,7 +84,27 @@ def guardar_imagenes(db: Session, transformacion_id: int, imagenes: list[dict[st
 
 
 def _iso(dt) -> str | None:
-    return dt.isoformat() if dt else None
+    """ISO 8601 con zona horaria. SQLite devuelve fechas sin zona: se asume UTC."""
+    if not dt:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.isoformat()
+
+
+_H1 = re.compile(r"<h1[^>]*>(.*?)</h1>", re.IGNORECASE | re.DOTALL)
+_TAGS = re.compile(r"<[^>]+>")
+
+
+def titulo_adaptacion(enunciado_adaptado: str | None) -> str | None:
+    """Texto del primer <h1> de la adaptación (el título motivador), sin etiquetas."""
+    if not enunciado_adaptado:
+        return None
+    match = _H1.search(enunciado_adaptado)
+    if not match:
+        return None
+    titulo = html.unescape(_TAGS.sub("", match.group(1))).strip()
+    return titulo[:200] or None
 
 
 def resumen_transformacion(trans: TransformacionEnunciado, truncar: int = 80) -> dict:
@@ -93,6 +116,7 @@ def resumen_transformacion(trans: TransformacionEnunciado, truncar: int = 80) ->
         "user_id": trans.user_id,
         "user_email": trans.user.email if trans.user else None,
         "enunciado_original": texto,
+        "titulo": titulo_adaptacion(trans.enunciado_adaptado),
         "nivel": trans.nivel,
         "idioma": trans.idioma,
         "prompt_version": trans.prompt_version,
@@ -116,6 +140,7 @@ def detalle_transformacion(trans: TransformacionEnunciado) -> dict:
         "max_palabras": trans.max_palabras,
         "idioma": trans.idioma,
         "prompt_version": trans.prompt_version,
+        "titulo": titulo_adaptacion(trans.enunciado_adaptado),
         "enunciado_adaptado": trans.enunciado_adaptado,
         "indicaciones_docentes": trans.indicaciones_docentes,
         "tokens_entrada": trans.tokens_entrada,
@@ -138,6 +163,7 @@ def detalle_transformacion(trans: TransformacionEnunciado) -> dict:
             "tokens_salida": p.tokens_salida,
             "duracion_ms": p.duracion_ms,
             "exito": p.exito,
+            "error_mensaje": p.error_mensaje,
             "created_at": _iso(p.created_at),
         }
     for img in sorted(trans.imagenes_contexto or [], key=lambda x: x.orden or 0):
@@ -149,6 +175,7 @@ def detalle_transformacion(trans: TransformacionEnunciado) -> dict:
             "tiene_imagen": img.imagen_data is not None,
             "mime_type": img.imagen_mime_type,
             "exito": img.exito,
+            "error_mensaje": img.error_mensaje,
             "created_at": _iso(img.created_at),
         })
     return resultado

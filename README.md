@@ -70,11 +70,15 @@ Con `PROMPTS_HOT_RELOAD=true` los cambios en los `.md` se aplican en la siguient
 
 ## Idiomas
 
-- La interfaz tiene un selector **ES | EN**, que se recuerda en el navegador.
-- El idioma de la interfaz se envía como `idioma` en cada petición y decide qué prompts se usan: la adaptación, la explicación para el docente, los pictogramas (ARASAAC se consulta en ese idioma), las etiquetas y el texto dentro de las imágenes.
+- **Idioma de la interfaz:** selector **ES | EN** de la cabecera (se recuerda en el navegador). Solo cambia los textos de la web y los mensajes de error.
+- **Idioma de la adaptación:** se elige en la ventana «Nueva transformación», independiente del de la interfaz (se recuerda el último elegido). Se envía como `idioma` y decide qué prompts se usan: la adaptación, la explicación para el docente, los pictogramas (ARASAAC se consulta en ese idioma), las etiquetas y el texto dentro de las imágenes.
 - Los pasos 2 y 3 (pictogramas e imágenes) heredan el idioma de su transformación.
 - Los errores del backend también se devuelven en ese idioma (`idioma` o cabecera `Accept-Language`).
 - Añadir un idioma: `app/prompts/<xx>/`, `static/i18n/<xx>.json`, `MESSAGES` y `LANGUAGE_NAMES` en `app/i18n.py`, y el código en `supported_languages` de `config.py` y en `SUPPORTED` de `static/js/i18n.js`.
+
+## Pantalla de acceso
+
+La caja de acceso tiene cuatro pestañas: *Acceder*, *¿Por qué LEdui?*, *Reglas* y *Contacto*. Los textos están en `static/i18n/es.json` y `en.json` (claves `info.*`). Al iniciar sesión se va directamente a las transformaciones.
 
 ## Administradores
 
