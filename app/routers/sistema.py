@@ -25,14 +25,6 @@ async def demo():
     return _frontend()
 
 
-@router.get("/favicon.ico", include_in_schema=False)
-async def favicon():
-    path = get_settings().static_dir / "img" / "favicon-32.png"
-    if not path.is_file():
-        raise HTTPException(status_code=404)
-    return FileResponse(path, media_type="image/png")
-
-
 @router.get("/salud")
 def salud():
     s = get_settings()

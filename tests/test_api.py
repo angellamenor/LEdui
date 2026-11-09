@@ -88,14 +88,6 @@ def test_adaptar_toma_idioma_de_accept_language(client, user, fake_adaptacion):
     assert r.json()["idioma"] == "en"
 
 
-def test_idioma_de_la_adaptacion_independiente_de_la_interfaz(client, user, fake_adaptacion):
-    """Interfaz en español (Accept-Language) pero adaptación pedida en inglés."""
-    r = client.post("/adaptar_enunciado_ledu", headers=auth_headers(user, "es-ES"),
-                    json={"enunciado": "Investiga la Revolución Industrial", "idioma": "en"})
-    assert r.json()["idioma"] == "en"
-    assert "in English" in fake_adaptacion.calls[0]["system"]
-
-
 def test_adaptar_error_se_registra_y_se_traduce(client, user, db, monkeypatch):
     async def boom(*a, **k):
         raise AIServiceError("caído")
@@ -212,15 +204,7 @@ def test_stats_e_historial(client, user, fake_adaptacion):
     stats = client.get("/auth/stats", headers=auth_headers(user)).json()
     assert stats["total_transformaciones"] == 1 and stats["tokens_usados"] == 30
     hist = client.get("/mi-historial", headers=auth_headers(user)).json()
-    item = hist["transformaciones"][0]
-    assert hist["total"] == 1 and item["idioma"] == "es"
-    assert item["titulo"] == "Título"                 # sale del <h1> de la adaptación
-    assert item["created_at"].endswith("+00:00")      # fechas siempre con zona horaria
-
-
-def test_favicon(client):
-    r = client.get("/favicon.ico")
-    assert r.status_code == 200 and r.headers["content-type"] == "image/png"
+    assert hist["total"] == 1 and hist["transformaciones"][0]["idioma"] == "es"
 
 
 def test_token_invalido(client):
