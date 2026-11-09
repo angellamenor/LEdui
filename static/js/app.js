@@ -334,7 +334,8 @@
       return original + notice('detail.error', { msg: vm.texto.error || vm.error_mensaje || t('common.na') }, 'error');
     }
     const notes = vm.texto.notes
-      ? `<div class="teacher-box"><h4>${escapeHtml(t('detail.teacher'))}</h4>${markdownToHtml(vm.texto.notes)}</div>` : '';
+      ? `<div class="teacher-box"><h4>${escapeHtml(t('detail.teacher'))}</h4>
+         <p class="teacher-sub">${escapeHtml(t('detail.teacher_sub'))}</p>${markdownToHtml(vm.texto.notes)}</div>` : '';
     return `${original}<div class="result-content">${sanitizeHtml(vm.texto.html)}</div>${notes}`;
   }
 

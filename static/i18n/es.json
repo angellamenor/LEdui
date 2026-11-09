@@ -60,7 +60,7 @@
   "detail.loading": "Cargando...",
   "detail.load_error": "No se pudo cargar el detalle: {msg}",
   "detail.original": "Ver el enunciado original",
-  "detail.teacher": "👨‍🏫 Indicaciones para el docente",
+  "detail.teacher": "👨‍🏫 Docente, ¿qué le faltaba a tu enunciado?",
   "detail.where_skill": "💡 ¿Dónde se aplicará cada habilidad?",
   "detail.why_image": "¿Por qué es útil esta imagen?",
   "detail.default_skill": "Esta habilidad se trabaja a lo largo del enunciado adaptado.",
@@ -120,7 +120,7 @@
   "info.tab_why": "¿Por qué LEdui?",
   "info.tab_rules": "Reglas LEdui",
   "info.tab_contact": "Contacto",
-  "info.no_code_html": "¿No tienes código de acceso? Escríbeme a <a href=\"mailto:angel@intell-i-gent.com\">angel@intell-i-gent.com</a>.",
+  "info.no_code_html": "¿No tienes código de acceso? Escríbeme a <a href=\"mailto:angel.lamenor@gmail.com\">angel.lamenor@gmail.com</a>.",
   "info.why_p1": "El Diseño Universal para el Aprendizaje (DUA) parte de una idea sencilla: no existe un único alumno ni una única forma de aprender. Por eso propone ofrecer distintas formas de representar la información, distintas maneras de actuar y expresar lo aprendido y varios caminos para implicarse y mantener la motivación. Y, sobre todo, anticiparse a las barreras en lugar de esperar a que aparezcan.",
   "info.why_p2": "El problema llega al llevarlo al aula. El DUA indica hacia dónde ir, pero no cómo convertir sus principios en decisiones concretas al escribir el enunciado de una actividad. Pide, por ejemplo, evitar la sobrecarga de información, pero no dice dónde está el límite. Por eso dos docentes con los mismos principios pueden llegar a soluciones muy distintas. Las checklists y rúbricas ayudan a revisar una actividad ya hecha, pero no a construirla. Y si se le pide a una IA que aplique el DUA, reproduce la misma ambigüedad: con el mismo enunciado, dos respuestas diferentes.",
   "info.why_p3": "LEdui (Lectura Educativa Inclusiva) nace para aterrizar el DUA. Sus principios se convierten en diez reglas que dicen qué mirar, qué cambiar y por qué en el enunciado de una tarea. Para concretarlas, LEdui se apoya además en otros estándares: la Lectura Fácil (UNE 153101:2018 EX), con criterios para redactar y estructurar textos comprensibles; las pautas de accesibilidad web WCAG, y la norma UNE 71362:2020 de calidad de los materiales educativos digitales. La idea no era crear otro marco teórico, sino tener una guía concreta para el día a día, de forma que el enunciado deje de ser un obstáculo y el alumno pueda centrarse en lo que de verdad tiene que aprender.",
@@ -164,5 +164,5 @@
   "info.award7": "Premio Mentes AMI 2026.",
   "info.rules_list_intro": "Las 10 reglas LEdui son:",
   "info.needs_p1": "En conjunto, las reglas responden a cinco grupos de necesidades. Las reglas 1, 2 y 3 (claridad, estructura y coherencia) son el núcleo del estándar y dan apoyo a la dislexia y otras dificultades específicas de aprendizaje. La regla 2 atiende además al alumnado con TEA, porque anticipa lo que viene, evita la sobrecarga de información y mantiene una secuencia predecible, y al alumnado con TDAH, porque separa lo esencial de lo secundario y ajusta cada paso a un tramo de atención. La discapacidad intelectual se cubre con la simplificación del lenguaje, la estructura clara y la regla 5, que ofrece pistas y ejemplos en lugar de la ayuda del docente. Las reglas 4 y 8 trabajan la gestión emocional y de la frustración: validan el esfuerzo, anticipan las dificultades, presentan el error como parte del proceso y plantean preguntas abiertas sin una única respuesta correcta.",
-  "info.needs_p2": "Queda fuera de su alcance la accesibilidad sensorial, es decir, la discapacidad visual y la auditiva. La regla 10 ofrece varios formatos para lo que el alumno entrega, pero no se ocupa de cómo recibe el contenido: subtítulos, transcripciones, compatibilidad con lectores de pantalla, contraste o textos alternativos para las imágenes. Es una decisión consciente, porque esa accesibilidad depende del formato técnico del material y no de cómo está redactado el texto, que es lo que aborda LEdui."
+  "detail.teacher_sub": "Estas son las reglas que más se han aplicado, con una explicación para que puedas ver qué mejorar en tus próximos enunciados."
 }

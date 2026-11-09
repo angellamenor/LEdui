@@ -60,7 +60,7 @@
   "detail.loading": "Loading...",
   "detail.load_error": "The details could not be loaded: {msg}",
   "detail.original": "Show the original task",
-  "detail.teacher": "👨‍🏫 Notes for the teacher",
+  "detail.teacher": "👨‍🏫 Teacher, what was your task missing?",
   "detail.where_skill": "💡 Where will each skill be applied?",
   "detail.why_image": "Why is this image useful?",
   "detail.default_skill": "This skill is practised throughout the adapted task.",
@@ -120,7 +120,7 @@
   "info.tab_why": "Why LEdui?",
   "info.tab_rules": "LEdui rules",
   "info.tab_contact": "Contact",
-  "info.no_code_html": "Don't have an access code? Write to me at <a href=\"mailto:angel@intell-i-gent.com\">angel@intell-i-gent.com</a>.",
+  "info.no_code_html": "Don't have an access code? Write to me at <a href=\"mailto:angel.lamenor@gmail.com\">angel.lamenor@gmail.com</a>.",
   "info.why_p1": "Universal Design for Learning (UDL) starts from a simple idea: there is no single student and no single way of learning. That is why it proposes offering different ways of representing information, different ways of acting on and expressing what has been learned, and several paths to engage and stay motivated. Above all, it aims to anticipate barriers instead of waiting for them to appear.",
   "info.why_p2": "The problem comes when you take it into the classroom. UDL shows where to go, but not how to turn its principles into specific decisions when writing the instructions of an activity. It asks, for example, to avoid information overload, but it doesn't say where the limit is. So two teachers with the same principles can reach very different solutions. Checklists and rubrics help review an activity that is already done, but not build it. And if you ask an AI to apply UDL, it reproduces the same ambiguity: the same task, two different answers.",
   "info.why_p3": "LEdui (Lectura Educativa Inclusiva, Inclusive Educational Reading) was created to bring UDL down to earth. Its principles become ten rules that say what to look at, what to change and why in the instructions of a task. To make them concrete, LEdui also draws on other standards: Easy Reading (UNE 153101:2018 EX), with criteria for writing and structuring understandable texts; the WCAG web accessibility guidelines; and the UNE 71362:2020 standard for the quality of digital educational materials. The goal was not to create another theoretical framework, but to have a concrete guide for everyday use, so that the task stops being an obstacle and the student can focus on what they really need to learn.",
@@ -164,5 +164,5 @@
   "info.award7": "Mentes AMI Award 2026.",
   "info.rules_list_intro": "The 10 LEdui rules are:",
   "info.needs_p1": "Taken together, the rules address five groups of needs. Rules 1, 2 and 3 (clarity, structure and coherence) are the core of the standard and support dyslexia and other specific learning difficulties. Rule 2 also supports autistic students, because it anticipates what comes next, avoids information overload and keeps a predictable sequence, and students with ADHD, because it separates the essential from the secondary and fits each step into a single span of attention. Intellectual disability is covered by simplified language, clear structure and rule 5, which offers hints and examples in place of the teacher's help. Rules 4 and 8 address emotional regulation and frustration: they value effort, anticipate difficulties, present mistakes as part of the process and ask open questions with no single right answer.",
-  "info.needs_p2": "Sensory accessibility, that is, visual and hearing impairment, is outside its scope. Rule 10 offers several formats for what the student submits, but it does not deal with how they receive the content: subtitles, transcripts, screen reader compatibility, contrast or text alternatives for images. This is a deliberate decision, because that kind of accessibility depends on the technical format of the material rather than on how the text is written, which is what LEdui addresses."
+  "detail.teacher_sub": "These are the rules that were applied the most, with an explanation so you can see what to improve in your next tasks."
 }
