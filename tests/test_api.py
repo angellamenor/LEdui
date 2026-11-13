@@ -233,3 +233,11 @@ def test_interfaz_se_revalida_siempre(client):
 def test_token_invalido(client):
     r = client.get("/auth/me", headers={"Authorization": "Bearer basura"})
     assert r.status_code == 401
+
+
+def test_ejemplos_por_nivel(client):
+    datos = client.get("/static/data/ejemplos.json").json()
+    niveles = {"primaria", "secundaria", "bachillerato", "fp", "universidad"}
+    for idioma in ("es", "en"):
+        assert set(datos[idioma]) == niveles
+        assert all(len(texto) < 15000 for texto in datos[idioma].values())

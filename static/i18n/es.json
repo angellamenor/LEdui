@@ -41,6 +41,7 @@
   "new.language": "🌐 Idioma de la adaptación",
   "new.language_hint": "El texto adaptado, los pictogramas y las imágenes se generarán en este idioma, independientemente del idioma de la interfaz.",
   "new.chars": "{n} / 15.000 caracteres",
+  "new.examples": "¿No sabes por dónde empezar? Prueba un ejemplo:",
   "new.cancel": "Cancelar",
   "new.submit": "✨ Transformar",
   "levels.primaria": "Primaria",

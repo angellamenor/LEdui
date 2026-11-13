@@ -78,7 +78,7 @@ Con `PROMPTS_HOT_RELOAD=true` los cambios en los `.md` se aplican en la siguient
 
 ## Pantalla de acceso
 
-La caja de acceso tiene cuatro pestañas: *Acceder*, *¿Por qué LEdui?*, *Reglas* y *Contacto*. Los textos están en `static/i18n/es.json` y `en.json` (claves `info.*`). Al iniciar sesión se va directamente a las transformaciones.
+La caja de acceso tiene cinco pestañas: *Acceder*, *¿Por qué LEdui?*, *Reglas LEdui*, *Vídeo demo* y *Contacto*. Los textos están en `static/i18n/es.json` y `en.json` (claves `info.*`). Al iniciar sesión se va directamente a las transformaciones.
 
 ## Administradores
 
@@ -93,3 +93,7 @@ python -m scripts.hacer_admin usuario@educastillalamancha.es
 `nixpacks.toml` y `Procfile` ejecutan `alembic upgrade head` antes de arrancar. Las migraciones son idempotentes: sobre la base de datos actual solo añaden las columnas `idioma` y `prompt_version`.
 
 Variables a revisar en Railway: renombra `MI_ANTHROPIC_KEY` a `ANTHROPIC_API_KEY` (el nombre antiguo sigue funcionando), define `SECRET_KEY`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (tu dominio) y `ENVIRONMENT=production`.
+
+### Enunciados de ejemplo
+
+En el modal de *Nueva transformación*, mientras el cuadro de texto está vacío, aparece una línea discreta con un ejemplo por nivel. Al pulsarlo se rellena el enunciado y se selecciona el nivel; el idioma del ejemplo es el elegido para la adaptación. Los textos están en `static/data/ejemplos.json` (los de ESO, FP y Universidad proceden del Anexo B de la memoria) y se pueden cambiar sin tocar el código.

@@ -41,6 +41,7 @@
   "new.language": "🌐 Adaptation language",
   "new.language_hint": "The adapted text, pictograms and images will be generated in this language, regardless of the interface language.",
   "new.chars": "{n} / 15,000 characters",
+  "new.examples": "Not sure where to start? Try an example:",
   "new.cancel": "Cancel",
   "new.submit": "✨ Transform",
   "levels.primaria": "Primary",

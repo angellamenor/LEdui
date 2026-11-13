@@ -524,7 +524,29 @@
   }
 
   function updateCharCount() {
-    $('charCount').textContent = t('new.chars', { n: I18n.formatNumber($('enunciado').value.length) });
+    const len = $('enunciado').value.length;
+    $('charCount').textContent = t('new.chars', { n: I18n.formatNumber(len) });
+    // Los ejemplos solo se ofrecen con el cuadro vacío: quien ya pega su enunciado no los ve.
+    $('examples').hidden = len > 0;
+  }
+
+  /** Enunciados de ejemplo (uno por nivel), en el idioma elegido para la adaptación. */
+  let examplesCache = null;
+  async function loadExample(nivel) {
+    try {
+      if (!examplesCache) {
+        const res = await fetch('/static/data/ejemplos.json');
+        if (!res.ok) throw new Error(res.statusText);
+        examplesCache = await res.json();
+      }
+    } catch (_) { return; }
+    const lang = $('idiomaSalida').value;
+    const text = (examplesCache[lang] || examplesCache.es || {})[nivel];
+    if (!text) return;
+    $('enunciado').value = text;
+    $('nivel').value = nivel;
+    updateCharCount();
+    $('enunciado').focus();
   }
 
   function submitNew(e) {
@@ -932,6 +954,9 @@
       const target = e.target;
       const infoTab = target.closest('[data-info-tab]');
       if (infoTab) return showInfoTab(infoTab.dataset.infoTab);
+
+      const example = target.closest('[data-example]');
+      if (example) return loadExample(example.dataset.example);
 
       const toggle = target.closest('[data-toggle]');
       if (toggle) return toggleCard(toggle.dataset.toggle);

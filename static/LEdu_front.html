@@ -245,7 +245,17 @@
                 <div class="form-group">
                     <label for="enunciado" data-i18n="new.statement"></label>
                     <textarea id="enunciado" maxlength="15000" rows="9" data-i18n-placeholder="new.statement_placeholder"></textarea>
-                    <div id="charCount" class="char-count"></div>
+                    <div class="statement-meta">
+                        <div id="examples" class="examples" hidden>
+                            <span data-i18n="new.examples"></span>
+                            <button type="button" class="link-btn" data-example="primaria" data-i18n="levels.primaria"></button>
+                            <button type="button" class="link-btn" data-example="secundaria" data-i18n="levels.secundaria"></button>
+                            <button type="button" class="link-btn" data-example="bachillerato" data-i18n="levels.bachillerato"></button>
+                            <button type="button" class="link-btn" data-example="fp" data-i18n="levels.fp"></button>
+                            <button type="button" class="link-btn" data-example="universidad" data-i18n="levels.universidad"></button>
+                        </div>
+                        <div id="charCount" class="char-count"></div>
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">

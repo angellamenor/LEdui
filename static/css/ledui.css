@@ -1863,7 +1863,45 @@
 
         .btn-inline { width: auto; padding: 12px 28px; }
 
+        .statement-meta {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap-reverse;
+            gap: 4px 12px;
+            margin-top: 6px;
+        }
+
+        .examples {
+            flex: 1 1 320px;
+            font-size: 12px;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .examples .link-btn {
+            background: none;
+            border: none;
+            padding: 0 2px;
+            font: inherit;
+            color: var(--primary-color);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .examples .link-btn + .link-btn::before {
+            content: "·";
+            color: var(--text-light);
+            margin-right: 4px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
         .char-count {
+            margin-left: auto;
+            white-space: nowrap;
             text-align: right;
             font-size: 12px;
             color: var(--text-light);
