@@ -1,4 +1,4 @@
-"""Conexión a la base de datos (PostgreSQL en producción) con SQLAlchemy."""
+"""Database connection (PostgreSQL in production) with SQLAlchemy."""
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -21,7 +21,7 @@ Base = declarative_base()
 
 
 def get_db():
-    """Dependencia de FastAPI: abre una sesión por petición y la cierra al terminar."""
+    """FastAPI dependency: opens one session per request and closes it afterwards."""
     db = SessionLocal()
     try:
         yield db

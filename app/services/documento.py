@@ -1,8 +1,8 @@
 """
-Exportación de una transformación a un documento Word (.docx) real.
+Exports a transformation to a native Word document (.docx).
 
-El enunciado adaptado llega como HTML sencillo (h1-h3, p, ol, ul, li, strong, em, br),
-así que se convierte con un pequeño parser en lugar de incrustar HTML.
+The adapted task statement arrives as simple HTML (h1-h3, p, ol, ul, li, strong, em, br),
+so it is converted with a small parser instead of embedding HTML.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ PRIMARY = RGBColor(0x2B, 0x7A, 0x78)
 
 
 class _HtmlToDocx(HTMLParser):
-    """Convierte el subconjunto de HTML que genera el modelo a párrafos de python-docx."""
+    """Convert the HTML subset produced by the model into python-docx paragraphs."""
 
     def __init__(self, document: Document, heading_offset: int = 1):
         super().__init__(convert_charrefs=True)
@@ -74,7 +74,7 @@ class _HtmlToDocx(HTMLParser):
 
 
 def _markdown_bold_paragraphs(document: Document, text: str):
-    """Párrafos separados por línea en blanco, con **negrita** estilo markdown."""
+    """Paragraphs separated by blank lines, with markdown-style **bold**."""
     for block in re.split(r"\n\s*\n", text.strip()):
         p = document.add_paragraph()
         for i, piece in enumerate(re.split(r"\*\*(.+?)\*\*", block)):

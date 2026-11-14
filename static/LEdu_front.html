@@ -30,7 +30,7 @@
         </header>
 
         <main class="content">
-            <!-- Caja de acceso, con pestañas informativas -->
+            <!-- Sign-in box with information tabs -->
             <section id="authSection" class="auth-section auth-box">
                 <nav class="auth-tabs" role="tablist" data-i18n-aria-label="info.tabs_label">
                     <button type="button" role="tab" aria-selected="true" data-info-tab="acceder" data-i18n="info.tab_access"></button>
@@ -129,7 +129,7 @@
                 </div>
             </section>
 
-            <!-- Usuario autenticado -->
+            <!-- Signed-in user -->
             <section id="userInfo" class="user-info">
                 <img id="userAvatar" src="" alt="" class="user-avatar" referrerpolicy="no-referrer">
                 <div class="user-details">
@@ -150,13 +150,13 @@
             </section>
 
             <div id="appSection" class="tabs-container">
-                <!-- Solo se muestra a administradores -->
+                <!-- Only shown to administrators -->
                 <nav id="mainTabs" class="tabs-nav" role="tablist" hidden>
                     <button type="button" class="tab-button active" role="tab" data-tab="mine" data-i18n="tabs.mine"></button>
                     <button type="button" class="tab-button" role="tab" data-tab="admin" data-i18n="tabs.admin"></button>
                 </nav>
 
-                <!-- Mis transformaciones -->
+                <!-- My transformations -->
                 <section id="tabMine" class="tab-content active" role="tabpanel">
                     <div class="page-head">
                         <div>
@@ -178,7 +178,7 @@
                     </div>
                 </section>
 
-                <!-- Administración -->
+                <!-- Administration -->
                 <section id="tabAdmin" class="tab-content" role="tabpanel">
                     <div class="admin-header">
                         <h2 data-i18n="admin.title"></h2>
@@ -234,7 +234,7 @@
 
     </div>
 
-    <!-- Ventana: nueva transformación -->
+    <!-- Dialog: new transformation -->
     <div id="newModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="newModalTitle">
         <div class="modal-content modal-narrow">
             <div class="modal-header">

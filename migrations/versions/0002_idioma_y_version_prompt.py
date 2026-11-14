@@ -1,7 +1,7 @@
-"""Añade idioma y prompt_version a transformaciones_enunciado.
+"""Add idioma (language) and prompt_version to transformaciones_enunciado.
 
-Ambas columnas son opcionales (nullable): las filas antiguas quedan con NULL,
-que la aplicación interpreta como 'es'.
+Both columns are nullable: older rows keep NULL, which the application
+interprets as 'es'.
 
 Revision ID: 0002
 Revises: 0001

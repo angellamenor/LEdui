@@ -1,13 +1,13 @@
 """
-Modelos de base de datos de LEdui.
+LEdui database models.
 
-User y las tres tablas especializadas de transformaciones. Respecto a la versión
-anterior se añaden dos columnas nullable a transformaciones_enunciado:
+User plus three tables for transformations. Two nullable columns were added to
+transformaciones_enunciado after the first version:
 
-- idioma: idioma en que se generó la adaptación ('es', 'en').
-- prompt_version: huella de los prompts usados, para poder comparar experimentos.
+- idioma: language the adaptation was generated in ('es', 'en').
+- prompt_version: fingerprint of the prompts used, to compare experiments.
 
-Las tablas existentes se actualizan con la migración de Alembic 0002.
+Existing tables are upgraded by Alembic migration 0002.
 """
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, JSON, LargeBinary, String, Text
 from sqlalchemy.orm import relationship
@@ -17,7 +17,7 @@ from app.database import Base
 
 
 class User(Base):
-    """Usuario autenticado con Google."""
+    """User authenticated with Google."""
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -33,7 +33,7 @@ class User(Base):
 
 
 class TransformacionEnunciado(Base):
-    """Adaptación completa de un enunciado a Lectura Educativa."""
+    """Full adaptation of a task statement to Educational Reading."""
     __tablename__ = "transformaciones_enunciado"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -64,7 +64,7 @@ class TransformacionEnunciado(Base):
 
 
 class GeneracionPictogramas(Base):
-    """Set de pictogramas de una transformación (relación 1:1)."""
+    """Pictogram set of a transformation (one-to-one)."""
     __tablename__ = "generacion_pictogramas"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -91,7 +91,7 @@ class GeneracionPictogramas(Base):
 
 
 class GeneracionImagenes(Base):
-    """Imágenes de contexto de una transformación (relación 1:N)."""
+    """Context images of a transformation (one-to-many)."""
     __tablename__ = "generacion_imagenes"
 
     id = Column(Integer, primary_key=True, index=True)

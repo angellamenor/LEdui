@@ -1,4 +1,4 @@
-"""Endpoints de IA: adaptación del enunciado, pictogramas e imágenes de contexto."""
+"""AI endpoints: task statement adaptation, pictograms and context images."""
 import base64
 import logging
 import time
@@ -18,7 +18,7 @@ from app.services.imagenes import generar_imagenes
 from app.services.pictogramas import explicacion_habilidades, generar_pictogramas
 
 logger = logging.getLogger(__name__)
-router = APIRouter(tags=["adaptación"])
+router = APIRouter(tags=["adaptation"])
 
 
 def _ms_since(start: float) -> int:
@@ -26,13 +26,13 @@ def _ms_since(start: float) -> int:
 
 
 def _resolver_transformacion(db: Session, transformacion_id: int | None, user: User, lang: str):
-    """Comprueba que la transformación existe y es del usuario. Devuelve (trans, idioma)."""
+    """Check that the transformation exists and belongs to the user. Returns (trans, language)."""
     if transformacion_id is None:
         return None, lang
     trans = crud.obtener_transformacion(db, transformacion_id, user)
     if trans is None:
         raise HTTPException(status_code=404, detail=t("error.no_encontrada", lang))
-    # La continuación de una transformación usa siempre su mismo idioma
+    # Later steps of a transformation always use its own language
     return trans, (trans.idioma or lang)
 
 
@@ -43,7 +43,7 @@ async def adaptar_enunciado_ledu(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Adapta un enunciado a Lectura Educativa (HTML con estructura fija) en el idioma pedido."""
+    """Adapt a task statement to Educational Reading (HTML with a fixed structure) in the requested language."""
     lang = resolve_language(data.idioma, request)
     if not data.enunciado or len(data.enunciado.strip()) < 5:
         raise HTTPException(status_code=400, detail=t("error.enunciado_corto", lang))
@@ -95,7 +95,7 @@ async def generar_pictogramas_endpoint(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Identifica las acciones de la tarea y las representa con pictogramas de ARASAAC."""
+    """Identify the actions of the task and represent them with ARASAAC pictograms."""
     lang = resolve_language(data.idioma, request)
     trans, lang = _resolver_transformacion(db, data.transformacion_id, current_user, lang)
     if not data.enunciado or len(data.enunciado.strip()) < 20:
@@ -113,7 +113,7 @@ async def generar_pictogramas_endpoint(
 
     imagen_b64 = base64.b64encode(res.imagen_compuesta).decode() if res.imagen_compuesta else None
     if trans:
-        # En la BD no se guardan las miniaturas en base64 de cada pictograma
+        # The base64 thumbnails of each pictogram are not stored in the database
         pasos = [{k: v for k, v in p.items() if k != "imagen_base64"} for p in res.pictogramas]
         crud.guardar_pictogramas(
             db, trans.id,
@@ -148,7 +148,7 @@ async def generar_imagenes_contexto(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Genera imágenes de contexto (16:9) con valor pedagógico usando Claude + Gemini."""
+    """Generate pedagogically useful context images (16:9) using Claude + Gemini."""
     lang = resolve_language(data.idioma, request)
     trans, lang = _resolver_transformacion(db, data.transformacion_id, current_user, lang)
     if not data.enunciado or len(" ".join(data.enunciado.split())) < 10:

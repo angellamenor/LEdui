@@ -1,4 +1,4 @@
-"""Historial del usuario y endpoints compartidos de descarga (documento e imágenes)."""
+"""User history and shared download endpoints (document and images)."""
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from sqlalchemy.orm import Session
 
@@ -9,7 +9,7 @@ from app.i18n import request_language, t
 from app.models import GeneracionImagenes, GeneracionPictogramas, TransformacionEnunciado, User
 from app.services.documento import generar_docx
 
-router = APIRouter(prefix="/mi-historial", tags=["historial"])
+router = APIRouter(prefix="/mi-historial", tags=["history"])
 
 DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 

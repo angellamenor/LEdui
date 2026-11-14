@@ -1,99 +1,147 @@
 # LEdui API
 
-Adaptación de enunciados educativos a **Lectura Educativa inclusiva** (LEdui), con pictogramas de ARASAAC e imágenes de contexto. Español e inglés.
+Adapts educational task statements to **Inclusive Educational Reading** (*Lectura Educativa Inclusiva*, LEdui), adding ARASAAC pictograms and AI-generated context images. Available in Spanish and English.
 
-## Estructura
+Live at <https://www.ledui.org>. A Spanish version of this file is available in [README.es.md](README.es.md).
+
+## How it works
+
+Each transformation runs in three steps:
+
+1. **Adapted text.** Claude rewrites the task statement following the 10 LEdui rules and explains the changes for the teacher.
+2. **Pictograms.** Claude extracts the key actions of the task, which are looked up in the [ARASAAC](https://arasaac.org) API and composed into a single image.
+3. **Context images.** Claude writes image prompts and Gemini generates the images.
+
+Steps 2 and 3 run in parallel once step 1 has finished.
+
+### AI models
+
+| Task | Model (default) | Environment variable |
+|---|---|---|
+| Text adaptation, pictogram keywords, image prompts | `claude-sonnet-4-5-20250929` | `CLAUDE_MODEL` |
+| Context image generation | `gemini-2.5-flash-image` | `GEMINI_IMAGE_MODEL` |
+
+The model name returned by the API is stored with every transformation.
+
+## Project structure
 
 ```
 app/
-  main.py            crea la aplicación FastAPI
-  config.py          toda la configuración (variables de entorno)
-  i18n.py            idioma de la petición y mensajes del backend
-  prompt_loader.py   carga de prompts desde ficheros / entorno
+  main.py            FastAPI application factory
+  config.py          all settings (environment variables)
+  i18n.py            request language and backend messages
+  prompt_loader.py   loads prompts from files / environment variables
   prompts/
-    es/  en/         un .md por prompt e idioma
+    es/  en/         one .md file per prompt and language
     estilos_imagen.json
   models.py  database.py  crud.py  schemas.py  auth.py
   routers/           auth, adaptaciones, historial, admin, sistema
   services/          llm (Claude), adaptacion, pictogramas, imagenes, documento (.docx)
-migrations/          Alembic (0001 esquema, 0002 idioma + prompt_version)
+migrations/          Alembic (0001 initial schema, 0002 language + prompt_version)
 static/
-  LEdu_front.html    interfaz
+  LEdu_front.html    user interface
   css/ledui.css
   js/i18n.js  js/app.js
-  i18n/es.json  i18n/en.json   textos de la interfaz
-scripts/hacer_admin.py
+  i18n/es.json  i18n/en.json   interface texts
+  data/ejemplos.json           example task statements
+scripts/make_admin.py
 tests/
 ```
 
-## Arrancar en local
+### Naming
+
+The domain vocabulary in the code (routes, database tables, module names) is in Spanish, because the project was designed for Spanish schools. Main terms:
+
+| Spanish | English |
+|---|---|
+| enunciado | task statement |
+| adaptación / transformación | adaptation / transformation |
+| nivel (educativo) | (educational) level |
+| idioma | language |
+| pictogramas | pictograms |
+| imágenes | images |
+| historial | history |
+| estilo | style |
+| docente | teacher |
+
+## Running locally
+
+Requires Python 3.11.
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
-cp .env.example .env          # y rellena las claves
+cp .env.example .env          # then fill in the keys
 alembic upgrade head
-uvicorn app.main:app --reload # http://localhost:8000  ·  docs: /docs
-pytest                        # tests (no llaman a ninguna API real)
+uvicorn app.main:app --reload # http://localhost:8000  ·  API docs: /docs
+pytest                        # tests (no real API is called)
 ```
 
-Copia también `logo-ledu2.png` a `static/`.
+For a quick local setup without PostgreSQL, set `DATABASE_URL=sqlite:///./ledui.db` in `.env`.
+
+Also copy `logo-ledu2.png` into `static/`.
 
 ## Prompts
 
-Cada prompt es un fichero en `app/prompts/<idioma>/<nombre>.md`:
+Each prompt is a file in `app/prompts/<language>/<name>.md`:
 
-| Nombre | Uso |
+| Name | Purpose |
 |---|---|
-| `adaptar_system`, `adaptar_user` | Adaptación del enunciado |
-| `pictogramas_system`, `pictogramas_user` | Acciones para ARASAAC |
-| `imagenes_system`, `imagenes_user` | Prompts para Gemini |
+| `adaptar_system`, `adaptar_user` | Task statement adaptation |
+| `pictogramas_system`, `pictogramas_user` | Actions to look up in ARASAAC |
+| `imagenes_system`, `imagenes_user` | Prompts for Gemini |
 
-Marcadores disponibles: `{{enunciado}}`, `{{nivel}}`, `{{max_palabras}}`, `{{num_imagenes}}`, `{{estilo}}`, `{{idioma}}` (`es`/`en`), `{{idioma_nombre}}` (`español`/`English`), `{{idioma_nombre_en}}` (`Spanish`/`English`). Las llaves simples `{ }` se pueden usar libremente para ejemplos JSON.
+Available placeholders: `{{enunciado}}`, `{{nivel}}`, `{{max_palabras}}`, `{{num_imagenes}}`, `{{estilo}}`, `{{idioma}}` (`es`/`en`), `{{idioma_nombre}}` (`español`/`English`), `{{idioma_nombre_en}}` (`Spanish`/`English`). Single braces `{ }` can be used freely for JSON examples.
 
-Orden de prioridad para cada prompt:
+Lookup order for each prompt:
 
-1. `PROMPT_<NOMBRE>_<IDIOMA>`: texto completo en una variable de entorno.
-2. `PROMPT_<NOMBRE>_<IDIOMA>_FILE`: ruta a un fichero.
-3. `PROMPTS_DIR/<idioma>/<nombre>.md`
-4. Los ficheros incluidos en `app/prompts/`.
+1. `PROMPT_<NAME>_<LANG>`: full text in an environment variable.
+2. `PROMPT_<NAME>_<LANG>_FILE`: path to a file.
+3. `PROMPTS_DIR/<lang>/<name>.md`
+4. The files shipped in `app/prompts/`.
 
-**Flujo para experimentar:**
-
-```bash
-mkdir -p experimentos/exp3/es
-cp app/prompts/es/adaptar_system.md experimentos/exp3/es/   # solo lo que cambias
-PROMPTS_DIR=experimentos/exp3 PROMPT_SET_NAME=exp3 PROMPTS_HOT_RELOAD=true uvicorn app.main:app --reload
-```
-
-Con `PROMPTS_HOT_RELOAD=true` los cambios en los `.md` se aplican en la siguiente petición. Cada transformación guarda `idioma` y `prompt_version` (p. ej. `exp3:1a2b3c4d`), así que luego puedes filtrar resultados por experimento: `GET /admin/transformaciones?prompt_version=exp3:1a2b3c4d`. `GET /admin/prompts` muestra qué prompts se están usando, de dónde salen y su huella; `POST /admin/prompts/reload` los vuelve a leer sin reiniciar.
-
-## Idiomas
-
-- **Idioma de la interfaz:** selector **ES | EN** de la cabecera (se recuerda en el navegador). Solo cambia los textos de la web y los mensajes de error.
-- **Idioma de la adaptación:** se elige en la ventana «Nueva transformación», independiente del de la interfaz (se recuerda el último elegido). Se envía como `idioma` y decide qué prompts se usan: la adaptación, la explicación para el docente, los pictogramas (ARASAAC se consulta en ese idioma), las etiquetas y el texto dentro de las imágenes.
-- Los pasos 2 y 3 (pictogramas e imágenes) heredan el idioma de su transformación.
-- Los errores del backend también se devuelven en ese idioma (`idioma` o cabecera `Accept-Language`).
-- Añadir un idioma: `app/prompts/<xx>/`, `static/i18n/<xx>.json`, `MESSAGES` y `LANGUAGE_NAMES` en `app/i18n.py`, y el código en `supported_languages` de `config.py` y en `SUPPORTED` de `static/js/i18n.js`.
-
-## Pantalla de acceso
-
-La caja de acceso tiene cinco pestañas: *Acceder*, *¿Por qué LEdui?*, *Reglas LEdui*, *Vídeo demo* y *Contacto*. Los textos están en `static/i18n/es.json` y `en.json` (claves `info.*`). Al iniciar sesión se va directamente a las transformaciones.
-
-## Administradores
-
-El rol de admin sale de la columna `users.is_admin`, no de una clave. La pestaña «Administración» aparece solo a esos usuarios.
+**Experimenting with prompts:**
 
 ```bash
-python -m scripts.hacer_admin usuario@educastillalamancha.es
+mkdir -p experiments/exp3/es
+cp app/prompts/es/adaptar_system.md experiments/exp3/es/   # only the ones you change
+PROMPTS_DIR=experiments/exp3 PROMPT_SET_NAME=exp3 PROMPTS_HOT_RELOAD=true uvicorn app.main:app --reload
 ```
 
-## Despliegue (Railway)
+With `PROMPTS_HOT_RELOAD=true`, changes to the `.md` files apply on the next request. Every transformation stores `idioma` and `prompt_version` (e.g. `exp3:1a2b3c4d`), so results can later be filtered by experiment: `GET /admin/transformaciones?prompt_version=exp3:1a2b3c4d`. `GET /admin/prompts` shows which prompts are in use, where they come from and their fingerprint; `POST /admin/prompts/reload` reloads them without restarting.
 
-`nixpacks.toml` y `Procfile` ejecutan `alembic upgrade head` antes de arrancar. Las migraciones son idempotentes: sobre la base de datos actual solo añaden las columnas `idioma` y `prompt_version`.
+## Languages
 
-Variables a revisar en Railway: renombra `MI_ANTHROPIC_KEY` a `ANTHROPIC_API_KEY` (el nombre antiguo sigue funcionando), define `SECRET_KEY`, `GOOGLE_CLIENT_ID`, `CORS_ORIGINS` (tu dominio) y `ENVIRONMENT=production`.
+- **Interface language:** the **ES | EN** switch in the header (remembered in the browser). It only changes the web texts and error messages.
+- **Adaptation language:** chosen in the "New transformation" dialog, independently of the interface language (the last choice is remembered). It is sent as `idioma` and selects the prompts used for the adaptation, the teacher notes, the pictograms (ARASAAC is queried in that language), and the labels and text inside the images.
+- Steps 2 and 3 (pictograms and images) inherit the language of their transformation.
+- Backend errors are returned in that language too (`idioma` or the `Accept-Language` header).
+- To add a language: `app/prompts/<xx>/`, `static/i18n/<xx>.json`, `MESSAGES` and `LANGUAGE_NAMES` in `app/i18n.py`, plus the code in `supported_languages` in `config.py` and `SUPPORTED` in `static/js/i18n.js`.
 
-### Enunciados de ejemplo
+## Example task statements
 
-En el modal de *Nueva transformación*, mientras el cuadro de texto está vacío, aparece una línea discreta con un ejemplo por nivel. Al pulsarlo se rellena el enunciado y se selecciona el nivel; el idioma del ejemplo es el elegido para la adaptación. Los textos están en `static/data/ejemplos.json` (los de ESO, FP y Universidad proceden del Anexo B de la memoria) y se pueden cambiar sin tocar el código.
+In the "New transformation" dialog, while the text box is empty, a small line offers one example per educational level. Clicking one fills in the task statement and selects the level; the example is shown in the chosen adaptation language. The texts live in `static/data/ejemplos.json` (the secondary, vocational and university examples come from Annex B of the author's bachelor's thesis) and can be edited without touching the code.
+
+## Sign-in screen
+
+The sign-in box has five tabs: *Sign in*, *Why LEdui?*, *LEdui rules*, *Demo video* and *Contact*. Their texts are in `static/i18n/es.json` and `en.json` (`info.*` keys). After signing in, users go straight to their transformations.
+
+## Administrators
+
+The admin role comes from the `users.is_admin` column, not from a key. The "Administration" tab is only shown to those users.
+
+```bash
+python -m scripts.make_admin user@example.com          # grant
+python -m scripts.make_admin user@example.com --revoke # revoke
+python -m scripts.make_admin --first                 # first registered user
+```
+
+## Deployment
+
+The `Dockerfile` (Python 3.11, DejaVu fonts for the pictogram labels) runs `alembic upgrade head` before starting the server. Migrations are idempotent.
+
+Environment variables required in production: `ENVIRONMENT=production`, `DATABASE_URL`, `SECRET_KEY`, `GOOGLE_CLIENT_ID`, `ANTHROPIC_API_KEY`, `GOOGLE_AI_API_KEY`, `VALID_ACCESS_KEY` and `CORS_ORIGINS` (your domain). See `.env.example` for the full list.
+
+## Author
+
+Ángel Luis González Serrano. Developed as a bachelor's thesis (Computer Engineering, University of Castilla-La Mancha), supervised by Carlos González Morcillo.

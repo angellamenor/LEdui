@@ -1,12 +1,12 @@
 """
-Internacionalización del backend.
+Backend internationalisation.
 
-- Resuelve el idioma de cada petición (campo `idioma` del cuerpo, cabecera
-  Accept-Language o idioma por defecto).
-- Traduce los mensajes que el backend devuelve al usuario (errores, textos de
-  respaldo, etiquetas de los documentos descargables).
+- Resolves the language of each request (`idioma` field in the body,
+  Accept-Language header or default language).
+- Translates the messages the backend returns to the user (errors, fallback
+  texts, labels of the downloadable documents).
 
-Los textos de la interfaz web viven en static/i18n/<idioma>.json.
+The web interface texts live in static/i18n/<language>.json.
 """
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ from fastapi import Request
 
 from app.config import get_settings
 
-# Nombre de cada idioma, escrito en ese mismo idioma y en inglés.
-# Se pasa a los prompts como {{idioma_nombre}} / {{idioma_nombre_en}}.
+# Name of each language, written in that language and in English.
+# Passed to the prompts as {{idioma_nombre}} / {{idioma_nombre_en}}.
 LANGUAGE_NAMES = {
     "es": {"native": "español", "en": "Spanish"},
     "en": {"native": "English", "en": "English"},
@@ -91,8 +91,8 @@ MESSAGES: dict[str, dict[str, str]] = {
 }
 
 
-# Niveles educativos: el frontend envía un código y el prompt recibe el nombre
-# en el idioma de la adaptación. Se aceptan también los valores antiguos.
+# Educational levels: the frontend sends a code and the prompt receives the name
+# in the adaptation language. Legacy values are also accepted.
 NIVELES = {
     "primaria": {"es": "Educación Primaria", "en": "Primary education"},
     "secundaria": {"es": "Educación Secundaria (ESO)", "en": "Secondary education"},
@@ -111,7 +111,7 @@ _NIVEL_ALIASES = {
 
 
 def normalize_nivel(value: str | None) -> str | None:
-    """Devuelve el código del nivel si se reconoce; si no, el valor tal cual."""
+    """Return the level code if recognised; otherwise the value unchanged."""
     if not value:
         return value
     key = value.strip().lower()
@@ -128,7 +128,7 @@ def nivel_label(value: str | None, lang: str) -> str:
 
 
 def t(key: str, lang: str | None = None, **kwargs) -> str:
-    """Traduce una clave al idioma indicado (con respaldo al idioma por defecto)."""
+    """Translate a key into the given language (falling back to the default language)."""
     settings = get_settings()
     lang = settings.normalize_language(lang)
     text = MESSAGES.get(lang, {}).get(key) or MESSAGES[settings.default_language].get(key, key)
@@ -141,7 +141,7 @@ def language_name(lang: str, in_english: bool = False) -> str:
 
 
 def resolve_language(explicit: str | None, request: Request | None = None) -> str:
-    """Prioridad: campo explícito > cabecera Accept-Language > idioma por defecto."""
+    """Priority: explicit field > Accept-Language header > default language."""
     settings = get_settings()
     if explicit:
         return settings.normalize_language(explicit)
@@ -157,5 +157,5 @@ def resolve_language(explicit: str | None, request: Request | None = None) -> st
 
 
 def request_language(request: Request) -> str:
-    """Dependencia de FastAPI para endpoints sin cuerpo (GET): ?idioma=en o Accept-Language."""
+    """FastAPI dependency for endpoints without a body (GET): ?idioma=en or Accept-Language."""
     return resolve_language(request.query_params.get("idioma") or request.query_params.get("lang"), request)

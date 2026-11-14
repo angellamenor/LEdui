@@ -1,25 +1,25 @@
 """
-Carga de prompts desde ficheros o variables de entorno.
+Loads prompts from files or environment variables.
 
-Cada prompt tiene un nombre (p. ej. "adaptar_system") y una versión por idioma.
-Orden de búsqueda para el prompt <nombre> en el idioma <lang>:
+Each prompt has a name (e.g. "adaptar_system") and one version per language.
+Lookup order for prompt <name> in language <lang>:
 
-  1. Variable de entorno PROMPT_<NOMBRE>_<LANG>        (texto completo)
-  2. Variable de entorno PROMPT_<NOMBRE>_<LANG>_FILE   (ruta a un fichero)
-  3. <PROMPTS_DIR>/<lang>/<nombre>.md
-  4. <PROMPTS_DIR>/<idioma por defecto>/<nombre>.md
-  5. Los mismos ficheros en la carpeta de prompts incluida en el código
-     (así, una carpeta de experimento solo necesita los prompts que cambian)
+  1. Environment variable PROMPT_<NAME>_<LANG>        (full text)
+  2. Environment variable PROMPT_<NAME>_<LANG>_FILE   (path to a file)
+  3. <PROMPTS_DIR>/<lang>/<name>.md
+  4. <PROMPTS_DIR>/<default language>/<name>.md
+  5. The same files in the prompts folder shipped with the code
+     (so an experiment folder only needs the prompts that change)
 
-Ejemplo: PROMPT_ADAPTAR_SYSTEM_EN_FILE=/datos/prueba_7/adaptar.md
+Example: PROMPT_ADAPTAR_SYSTEM_EN_FILE=/data/test_7/adaptar.md
 
-Las plantillas usan marcadores {{variable}}. No se usan llaves simples para
-que los ejemplos JSON del prompt no necesiten escaparse.
+Templates use {{variable}} placeholders. Single braces are not used, so the
+JSON examples inside the prompts do not need escaping.
 
-Cada prompt cargado tiene una huella (hash) corta. La combinación de huellas
-de una llamada se guarda en la base de datos como `prompt_version`, de modo
-que se puede saber con qué versión de los prompts se generó cada resultado.
-Con PROMPT_SET_NAME=exp3 la versión queda como "exp3:1a2b3c4d".
+Every loaded prompt has a short fingerprint (hash). The combined fingerprint
+of a call is stored in the database as `prompt_version`, so it is possible to
+know which version of the prompts produced each result.
+With PROMPT_SET_NAME=exp3 the version becomes "exp3:1a2b3c4d".
 """
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ class PromptTemplate:
     name: str
     lang: str
     text: str
-    source: str  # de dónde se cargó (variable de entorno o ruta)
+    source: str  # where it was loaded from (environment variable or path)
 
     @property
     def fingerprint(self) -> str:
@@ -72,7 +72,7 @@ class PromptTemplate:
     def render(self, **variables) -> str:
         missing = self.placeholders - variables.keys()
         if missing:
-            logger.warning("Prompt %s/%s: variables sin valor %s", self.lang, self.name, sorted(missing))
+            logger.warning("Prompt %s/%s: placeholders without a value %s", self.lang, self.name, sorted(missing))
 
         def _replace(match: re.Match) -> str:
             key = match.group(1)
@@ -86,7 +86,7 @@ class PromptLoader:
         self._cache: dict[tuple[str, str], PromptTemplate] = {}
         self._lock = Lock()
 
-    # --- API pública ---------------------------------------------------------
+    # --- Public API ----------------------------------------------------------
 
     def get(self, name: str, lang: str) -> PromptTemplate:
         settings = get_settings()
@@ -103,7 +103,7 @@ class PromptLoader:
         return self.get(name, lang).render(**variables)
 
     def version(self, names: list[str], lang: str) -> str:
-        """Huella combinada de varios prompts, opcionalmente con el nombre del set."""
+        """Combined fingerprint of several prompts, optionally prefixed with the set name."""
         combined = "|".join(self.get(n, lang).fingerprint for n in names)
         digest = hashlib.sha256(combined.encode()).hexdigest()[:8]
         set_name = os.environ.get("PROMPT_SET_NAME", "").strip()
@@ -112,10 +112,10 @@ class PromptLoader:
     def reload(self) -> None:
         with self._lock:
             self._cache.clear()
-        logger.info("Caché de prompts vaciada")
+        logger.info("Prompt cache cleared")
 
     def describe(self) -> list[dict]:
-        """Resumen de todos los prompts activos (para el panel de admin)."""
+        """Summary of all active prompts (for the admin panel)."""
         settings = get_settings()
         out = []
         for lang in settings.supported_languages:
@@ -134,7 +134,7 @@ class PromptLoader:
                     out.append({"nombre": name, "idioma": lang, "error": str(exc)})
         return out
 
-    # --- Internos ------------------------------------------------------------
+    # --- Internals -----------------------------------------------------------
 
     def _load(self, name: str, lang: str) -> PromptTemplate:
         settings = get_settings()
@@ -148,7 +148,7 @@ class PromptLoader:
         if env_file:
             path = Path(env_file)
             if not path.is_file():
-                raise PromptNotFoundError(f"{env_base}_FILE apunta a un fichero que no existe: {path}")
+                raise PromptNotFoundError(f"{env_base}_FILE points to a file that does not exist: {path}")
             return PromptTemplate(name, lang, path.read_text(encoding="utf-8"), f"file:{path}")
 
         candidates: list[Path] = []
@@ -160,10 +160,10 @@ class PromptLoader:
         for path in candidates:
             if path.is_file():
                 if path.parent.name != lang:
-                    logger.warning("Prompt %s no existe en '%s'; se usa %s", name, lang, path)
+                    logger.warning("Prompt %s does not exist for '%s'; using %s", name, lang, path)
                 return PromptTemplate(name, lang, path.read_text(encoding="utf-8"), f"file:{path}")
 
-        raise PromptNotFoundError(f"No se encontró el prompt '{name}' para el idioma '{lang}'")
+        raise PromptNotFoundError(f"Prompt '{name}' not found for language '{lang}'")
 
 
 prompts = PromptLoader()

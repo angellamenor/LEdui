@@ -1,4 +1,4 @@
-"""Imágenes de contexto: Claude redacta los prompts y Gemini genera las imágenes."""
+"""Context images: Claude writes the prompts and Gemini generates the images."""
 from __future__ import annotations
 
 import base64
@@ -47,7 +47,7 @@ async def generar_imagenes(enunciado: str, num_imagenes: int, estilo: str | None
     settings = get_settings()
     client = get_genai_client()
     if client is None:
-        raise AIServiceNotConfigured("GOOGLE_AI_API_KEY no configurada")
+        raise AIServiceNotConfigured("GOOGLE_AI_API_KEY is not configured")
 
     variables = {
         "enunciado": _clean(enunciado),
@@ -94,8 +94,8 @@ async def generar_imagenes(enunciado: str, num_imagenes: int, estilo: str | None
                 })
             else:
                 salida.imagenes.append({**base, "exito": False, "error": t("error.imagen_no_recibida", lang)})
-        except Exception as exc:  # un fallo en una imagen no debe tumbar las demás
-            logger.error("Error generando imagen %s: %s", idx, exc)
+        except Exception as exc:  # one failed image must not break the others
+            logger.error("Error generating image %s: %s", idx, exc)
             salida.imagenes.append({**base, "exito": False, "error": str(exc)})
 
     return salida

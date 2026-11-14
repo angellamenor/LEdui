@@ -1,4 +1,4 @@
-"""Endpoints de autenticación."""
+"""Authentication endpoints."""
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -13,7 +13,7 @@ from app.config import get_settings
 from app.schemas import AccessKeyInput, GoogleTokenInput, TokenResponse, UserResponse
 
 logger = logging.getLogger(__name__)
-router = APIRouter(prefix="/auth", tags=["autenticación"])
+router = APIRouter(prefix="/auth", tags=["authentication"])
 
 
 def _user_dict(user: User) -> dict:
@@ -23,7 +23,7 @@ def _user_dict(user: User) -> dict:
 
 @router.post("/google", response_model=TokenResponse)
 async def login_with_google(data: GoogleTokenInput, request: Request, db: Session = Depends(get_db)):
-    """Recibe el ID token de Google (y la clave de acceso) y devuelve un JWT propio de la API."""
+    """Receive the Google ID token (and the access key) and return the API's own JWT."""
     lang = request_language(request)
     if not get_settings().is_valid_access_key(data.access_key):
         raise HTTPException(status_code=403, detail=t("error.clave_acceso", lang))
@@ -33,15 +33,15 @@ async def login_with_google(data: GoogleTokenInput, request: Request, db: Sessio
     except HTTPException:
         raise
     except Exception:
-        logger.exception("Error en autenticación")
+        logger.exception("Authentication error")
         raise HTTPException(status_code=500, detail=t("error.auth", lang))
-    logger.info("Usuario autenticado: id=%s", user.id)
+    logger.info("User authenticated: id=%s", user.id)
     return {"access_token": create_access_token(user.id), "token_type": "bearer", "user": _user_dict(user)}
 
 
 @router.post("/check-key")
 async def check_access_key(data: AccessKeyInput):
-    """Permite a la interfaz validar la clave antes de mostrar el botón de Google."""
+    """Lets the interface validate the key before showing the Google button."""
     return {"valida": get_settings().is_valid_access_key(data.access_key)}
 
 

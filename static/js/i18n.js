@@ -1,12 +1,12 @@
 /*
- * i18n mínimo para LEdui (sin dependencias).
+ * Minimal i18n for LEdui (no dependencies).
  *
- * - Traducciones en /static/i18n/<idioma>.json
- * - En el HTML: data-i18n="clave"               -> textContent
- *               data-i18n-placeholder="clave"   -> placeholder
- *               data-i18n-title / -aria-label   -> atributos
- * - En JS: I18n.t('clave', {variable: valor})
- * - El idioma elegido se recuerda en localStorage ('ledui_lang').
+ * - Translations in /static/i18n/<language>.json
+ * - In HTML: data-i18n="key"                -> textContent
+ *            data-i18n-placeholder="key"    -> placeholder
+ *            data-i18n-title / -aria-label  -> attributes
+ * - In JS: I18n.t('key', {variable: value})
+ * - The chosen language is remembered in localStorage ('ledui_lang').
  */
 (function (global) {
   const SUPPORTED = ['es', 'en'];
@@ -21,7 +21,7 @@
     try { return localStorage.getItem(STORAGE_KEY); } catch (_) { return null; }
   }
   function storageSet(v) {
-    try { localStorage.setItem(STORAGE_KEY, v); } catch (_) { /* modo privado */ }
+    try { localStorage.setItem(STORAGE_KEY, v); } catch (_) { /* private mode */ }
   }
 
   function detect(defaultLang) {
@@ -54,7 +54,7 @@
   function apply(root) {
     const scope = root || document;
     scope.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-    // Solo para textos propios con formato (negritas, enlaces) definidos en los JSON del proyecto
+    // Only for the project's own formatted texts (bold, links) defined in its JSON files
     scope.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
     scope.querySelectorAll('[data-i18n-alt]').forEach(el => { el.alt = t(el.dataset.i18nAlt); });
     scope.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
@@ -66,7 +66,7 @@
 
   async function setLanguage(lang) {
     if (!SUPPORTED.includes(lang)) lang = 'es';
-    if (!cache.es) await load('es'); // respaldo para claves que falten
+    if (!cache.es) await load('es'); // fallback for missing keys
     dict = await load(lang);
     current = lang;
     storageSet(lang);

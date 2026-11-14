@@ -1,8 +1,8 @@
 """
-LEdui API — adaptación de enunciados educativos a Lectura Educativa inclusiva.
+LEdui API: adapts educational task statements to Inclusive Educational Reading.
 
-Arranque local:   uvicorn app.main:app --reload
-Documentación:    http://localhost:8000/docs
+Run locally:   uvicorn app.main:app --reload
+API docs:      http://localhost:8000/docs
 """
 import logging
 
@@ -26,7 +26,7 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
         version=settings.app_version,
-        description="API de LEdui: adaptación de enunciados a Lectura Educativa inclusiva (es/en).",
+        description="LEdui API: adaptation of task statements to Inclusive Educational Reading (es/en).",
     )
 
     app.add_middleware(
@@ -41,11 +41,10 @@ def create_app() -> FastAPI:
     @app.middleware("http")
     async def no_stale_frontend(request, call_next):
         """
-        Obliga al navegador a revalidar la interfaz (HTML, JS, CSS, textos) en cada
-        carga. Sin esto, tras un despliegue podía mezclar un HTML nuevo con un
-        JavaScript antiguo guardado en caché y la página quedaba en blanco.
-        La revalidación usa ETag, así que si el fichero no ha cambiado no se vuelve
-        a descargar.
+        Force the browser to revalidate the interface (HTML, JS, CSS, texts) on every
+        load. Without this, after a deployment the browser could mix a new HTML file
+        with old cached JavaScript and the page was left blank.
+        Revalidation uses ETags, so unchanged files are not downloaded again.
         """
         response = await call_next(request)
         path = request.url.path

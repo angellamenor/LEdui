@@ -1,11 +1,11 @@
-"""Entorno de Alembic: usa la misma configuración y modelos que la aplicación."""
+"""Alembic environment: uses the same settings and models as the application."""
 from logging.config import fileConfig
 
 from alembic import context
 
 from app.config import get_settings
 from app.database import Base, engine
-import app.models  # noqa: F401  (registra los modelos en Base.metadata)
+import app.models  # noqa: F401  (registers the models in Base.metadata)
 
 config = context.config
 if config.config_file_name is not None:

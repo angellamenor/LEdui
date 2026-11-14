@@ -1,4 +1,4 @@
-"""Pictogramas: Claude identifica acciones, ARASAAC aporta los pictogramas y Pillow los compone."""
+"""Pictograms: Claude identifies the actions, ARASAAC provides the pictograms and Pillow composes them."""
 from __future__ import annotations
 
 import asyncio
@@ -56,7 +56,7 @@ def _load_font():
 
 
 def componer_imagen(items: list[tuple[Image.Image, str]]) -> bytes:
-    """Coloca los pictogramas en fila con su etiqueta debajo y devuelve un PNG."""
+    """Place the pictograms in a row with their label underneath and return a PNG."""
     font = _load_font()
     text_height = FONT_SIZE + 16
     width = len(items) * PICTO_SIZE + (len(items) + 1) * PADDING
@@ -120,7 +120,7 @@ async def _buscar_pictograma(client: httpx.AsyncClient, accion: dict, lang: str)
             "_img": img,
         })
     except Exception as exc:
-        logger.warning("ARASAAC falló para '%s': %s", keyword, exc)
+        logger.warning("ARASAAC failed for '%s': %s", keyword, exc)
         info["error"] = str(exc)
     return info
 
@@ -141,7 +141,7 @@ async def generar_pictogramas(enunciado: str, lang: str) -> ResultadoPictogramas
     if not isinstance(acciones, list) or not acciones:
         raise AIResponseError(t("error.sin_acciones", lang))
 
-    # Quitar duplicados por keyword manteniendo el orden
+    # Remove duplicates by keyword, keeping the order
     vistas, unicas = set(), []
     for accion in acciones:
         key = str(accion.get("keyword_arasaac", "")).strip().lower()

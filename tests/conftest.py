@@ -1,4 +1,4 @@
-"""Configuración común de los tests: SQLite temporal y servicios externos simulados."""
+"""Shared test setup: temporary SQLite database and mocked external services."""
 import os
 import tempfile
 

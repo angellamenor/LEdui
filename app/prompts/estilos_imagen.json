@@ -1,5 +1,5 @@
 {
-  "_comentario": "Sufijo que se añade al prompt de Gemini según el estilo elegido. Puedes editarlo o añadir estilos nuevos.",
+  "_comment": "Suffix appended to the Gemini prompt for the chosen style. Edit it or add new styles.",
   "educativo": "professional educational style, clean composition, soft lighting, high quality",
   "ilustrativo": "illustration style, vibrant colors, artistic rendering, engaging visual",
   "realista": "photorealistic, natural lighting, high detail, professional photography",

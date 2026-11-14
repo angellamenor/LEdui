@@ -1,17 +1,17 @@
-"""Frontend, salud y configuración pública."""
+"""Frontend, health check and public configuration."""
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from app.config import get_settings
 
-router = APIRouter(tags=["sistema"])
+router = APIRouter(tags=["system"])
 
 
 def _frontend() -> FileResponse:
     settings = get_settings()
     path = settings.static_dir / settings.frontend_file
     if not path.is_file():
-        raise HTTPException(status_code=404, detail="Frontend no encontrado")
+        raise HTTPException(status_code=404, detail="Frontend not found")
     return FileResponse(path)
 
 
@@ -47,7 +47,7 @@ def salud():
 
 @router.get("/config/public")
 def config_publica():
-    """Configuración que necesita el frontend (nada secreto)."""
+    """Configuration needed by the frontend (nothing secret)."""
     s = get_settings()
     return {
         "idiomas": list(s.supported_languages),

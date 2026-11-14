@@ -1,4 +1,4 @@
-"""Cliente de Claude y utilidades para extraer el JSON de sus respuestas."""
+"""Claude client and helpers to extract the JSON from its responses."""
 from __future__ import annotations
 
 import json
@@ -14,15 +14,15 @@ logger = logging.getLogger(__name__)
 
 
 class AIServiceNotConfigured(RuntimeError):
-    """Falta la API key del proveedor."""
+    """The provider's API key is missing."""
 
 
 class AIServiceError(RuntimeError):
-    """El proveedor devolvió un error (red, cuota, 5xx...)."""
+    """The provider returned an error (network, quota, 5xx...)."""
 
 
 class AIResponseError(ValueError):
-    """La respuesta llegó, pero no tiene el formato esperado."""
+    """A response arrived, but it does not have the expected format."""
 
 
 @dataclass
@@ -42,8 +42,8 @@ def get_anthropic_client() -> AsyncAnthropic | None:
 
 def extract_json_object(text: str) -> dict:
     """
-    Extrae el primer objeto JSON de un texto, tolerando bloques ```json y texto alrededor.
-    Cuenta llaves fuera de las cadenas para encontrar el cierre correcto.
+    Extract the first JSON object from a text, tolerating ```json fences and surrounding text.
+    Braces outside strings are counted to find the matching closing brace.
     """
     cleaned = text.strip()
     if cleaned.startswith("```"):
@@ -55,7 +55,7 @@ def extract_json_object(text: str) -> dict:
 
     start = cleaned.find("{")
     if start == -1:
-        raise AIResponseError("La respuesta no contiene un objeto JSON")
+        raise AIResponseError("The response does not contain a JSON object")
 
     depth, in_string, escaped = 0, False, False
     for i in range(start, len(cleaned)):
@@ -79,17 +79,17 @@ def extract_json_object(text: str) -> dict:
                 try:
                     data = json.loads(cleaned[start: i + 1])
                 except json.JSONDecodeError as exc:
-                    raise AIResponseError(f"JSON inválido: {exc}") from exc
+                    raise AIResponseError(f"Invalid JSON: {exc}") from exc
                 if not isinstance(data, dict):
-                    raise AIResponseError("El JSON no es un objeto")
+                    raise AIResponseError("The JSON is not an object")
                 return data
-    raise AIResponseError("JSON incompleto (¿respuesta cortada por max_tokens?)")
+    raise AIResponseError("Incomplete JSON (response truncated by max_tokens?)")
 
 
 async def complete_json(system: str, user: str, max_tokens: int) -> LLMResult:
     client = get_anthropic_client()
     if client is None:
-        raise AIServiceNotConfigured("ANTHROPIC_API_KEY no configurada")
+        raise AIServiceNotConfigured("ANTHROPIC_API_KEY is not configured")
 
     settings = get_settings()
     try:
@@ -100,14 +100,14 @@ async def complete_json(system: str, user: str, max_tokens: int) -> LLMResult:
             messages=[{"role": "user", "content": user}],
         )
     except APIError as exc:
-        logger.error("Error de la API de Anthropic: %s", exc)
+        logger.error("Anthropic API error: %s", exc)
         raise AIServiceError(str(exc)) from exc
 
     text = "".join(getattr(part, "text", "") for part in response.content or []).strip()
     if not text:
-        raise AIResponseError("Respuesta vacía del modelo")
+        raise AIResponseError("Empty response from the model")
     if response.stop_reason == "max_tokens":
-        logger.warning("La respuesta de Claude se cortó por max_tokens=%s", max_tokens)
+        logger.warning("Claude's response was truncated at max_tokens=%s", max_tokens)
 
     return LLMResult(
         data=extract_json_object(text),

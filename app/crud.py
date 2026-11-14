@@ -1,4 +1,4 @@
-"""Acceso a datos: guardado y lectura de transformaciones, pictogramas e imágenes."""
+"""Data access: storing and reading transformations, pictograms and images."""
 from __future__ import annotations
 
 import html
@@ -23,7 +23,7 @@ def _save(db: Session, obj):
         return obj
     except Exception:
         db.rollback()
-        logger.exception("Error guardando %s", type(obj).__name__)
+        logger.exception("Error saving %s", type(obj).__name__)
         return None
 
 
@@ -33,7 +33,7 @@ def guardar_transformacion(db: Session, **fields) -> TransformacionEnunciado | N
 
 
 def obtener_transformacion(db: Session, transformacion_id: int, user: User | None = None) -> TransformacionEnunciado | None:
-    """Devuelve la transformación; si se pasa `user` (no admin), solo si es suya."""
+    """Return the transformation; if `user` (non-admin) is given, only if it belongs to them."""
     query = db.query(TransformacionEnunciado).filter(TransformacionEnunciado.id == transformacion_id)
     if user is not None and not user.is_admin:
         query = query.filter(TransformacionEnunciado.user_id == user.id)
@@ -41,7 +41,7 @@ def obtener_transformacion(db: Session, transformacion_id: int, user: User | Non
 
 
 def guardar_pictogramas(db: Session, transformacion_id: int, **fields) -> GeneracionPictogramas | None:
-    """Crea o sustituye el set de pictogramas (la relación es 1:1)."""
+    """Create or replace the pictogram set (one-to-one relationship)."""
     existente = db.query(GeneracionPictogramas).filter(
         GeneracionPictogramas.transformacion_id == transformacion_id
     ).first()
@@ -55,7 +55,7 @@ def guardar_pictogramas(db: Session, transformacion_id: int, **fields) -> Genera
 def guardar_imagenes(db: Session, transformacion_id: int, imagenes: list[dict[str, Any]],
                      duracion_ms: int | None = None, exito: bool = True,
                      error_mensaje: str | None = None) -> list[GeneracionImagenes]:
-    """Guarda las imágenes de contexto. Si no hay imágenes y hubo error, se guarda un registro de error."""
+    """Store the context images. If there are no images and an error occurred, an error record is stored."""
     try:
         objetos = []
         if not imagenes and not exito:
@@ -79,12 +79,12 @@ def guardar_imagenes(db: Session, transformacion_id: int, imagenes: list[dict[st
         return objetos
     except Exception:
         db.rollback()
-        logger.exception("Error guardando imágenes de contexto")
+        logger.exception("Error saving context images")
         return []
 
 
 def _iso(dt) -> str | None:
-    """ISO 8601 con zona horaria. SQLite devuelve fechas sin zona: se asume UTC."""
+    """ISO 8601 with time zone. SQLite returns naive datetimes, which are assumed to be UTC."""
     if not dt:
         return None
     if dt.tzinfo is None:
@@ -97,7 +97,7 @@ _TAGS = re.compile(r"<[^>]+>")
 
 
 def titulo_adaptacion(enunciado_adaptado: str | None) -> str | None:
-    """Texto del primer <h1> de la adaptación (el título motivador), sin etiquetas."""
+    """Text of the first <h1> of the adaptation (the motivating title), without tags."""
     if not enunciado_adaptado:
         return None
     match = _H1.search(enunciado_adaptado)

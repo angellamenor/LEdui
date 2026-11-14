@@ -1,4 +1,4 @@
-"""Panel de administración (requiere usuario con is_admin=True)."""
+"""Administration panel (requires a user with is_admin=True)."""
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -78,12 +78,12 @@ async def imagen_contexto(imagen_id: int, request: Request, db: Session = Depend
 
 @router.get("/prompts")
 async def prompts_activos():
-    """Qué prompts se están usando, de dónde se han cargado y su huella."""
+    """Which prompts are in use, where they were loaded from and their fingerprint."""
     return {"ok": True, "prompts": prompts.describe()}
 
 
 @router.post("/prompts/reload")
 async def recargar_prompts():
-    """Vuelve a leer los prompts del disco/entorno sin reiniciar el servidor."""
+    """Reload the prompts from disk/environment without restarting the server."""
     prompts.reload()
     return {"ok": True, "prompts": prompts.describe()}

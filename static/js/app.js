@@ -1,21 +1,21 @@
 /*
- * LEdui — lógica del frontend.
- * Depende de i18n.js (window.I18n). Sin frameworks.
+ * LEdui frontend logic.
+ * Depends on i18n.js (window.I18n). No frameworks.
  *
- * Modelo de la vista: cada transformación es un objeto "vm" con tres partes
- * (texto, pictos, imagenes), cada una con un estado:
+ * View model: each transformation is a "vm" object with three parts
+ * (texto, pictos, imagenes), each with a status:
  *   pending · loading · ok · error · none · skipped
- * Las tarjetas se vuelven a pintar a partir del vm cada vez que cambia algo,
- * lo que permite ver la generación "en directo".
+ * Cards are re-rendered from the vm whenever something changes,
+ * which lets the user watch the generation "live".
  */
 (function () {
   'use strict';
 
-  // La interfaz la sirve la propia API, así que se usa el mismo origen.
-  // Solo si se abre el HTML como fichero suelto se apunta al servidor local.
+  // The interface is served by the API itself, so the same origin is used.
+  // Only when the HTML is opened as a local file does it point to the local server.
   const API_URL = window.location.protocol === 'file:' ? 'http://localhost:8000' : window.location.origin;
 
-  // Client ID por defecto (el de la versión anterior); el servidor puede sustituirlo vía /config/public
+  // Default client ID; the server can override it through /config/public
   const DEFAULT_GOOGLE_CLIENT_ID = '1016751986529-b87941fcfc310qut1am83t7fe5b0rvcl.apps.googleusercontent.com';
   const ARASAAC_IMG = 'https://api.arasaac.org/api/pictograms/';
   const MAX_CHARS = 15000;
@@ -31,16 +31,16 @@
     googleReady: false,
     googleInitialised: false,
     activeTab: 'mine',
-    mine: [],              // vms de "Mis transformaciones", la más reciente primero
+    mine: [],              // vms of "My transformations", most recent first
     mineLoaded: false,
-    admin: new Map(),      // vms abiertos desde el panel de admin (por id)
+    admin: new Map(),      // vms opened from the admin panel (by id)
     tmpCounter: 0,
   };
 
   const $ = (id) => document.getElementById(id);
   const t = (k, p) => I18n.t(k, p);
 
-  // ================================================================ utilidades
+  // ================================================================ utilities
 
   function escapeHtml(text) {
     const div = document.createElement('div');
@@ -48,7 +48,7 @@
     return div.innerHTML;
   }
 
-  /** Deja solo las etiquetas que genera el modelo, sin atributos (evita XSS). */
+  /** Keep only the tags the model produces, without attributes (prevents XSS). */
   const ALLOWED_TAGS = new Set(['H1', 'H2', 'H3', 'H4', 'P', 'OL', 'UL', 'LI', 'STRONG', 'B', 'EM', 'I', 'BR']);
   function sanitizeHtml(html) {
     const doc = new DOMParser().parseFromString(`<div>${html || ''}</div>`, 'text/html');
@@ -73,7 +73,7 @@
     return root.innerHTML;
   }
 
-  /** **negrita** y párrafos separados por línea en blanco -> HTML seguro. */
+  /** **bold** and paragraphs separated by blank lines -> safe HTML. */
   function markdownToHtml(text) {
     if (!text) return '';
     return escapeHtml(text)
@@ -199,7 +199,7 @@
     }
   }
 
-  // ================================================================ modelo de vista
+  // ================================================================ view model
 
   function newVm(fields) {
     return Object.assign({
@@ -214,7 +214,7 @@
     }, fields);
   }
 
-  /** Resumen de la lista (sin detalle todavía). */
+  /** List summary (no detail yet). */
   function vmFromSummary(s, scope) {
     return newVm({
       key: `${scope}-${s.id}`, id: s.id, scope,
@@ -234,7 +234,7 @@
     }));
   }
 
-  /** Completa el vm con el detalle de la API (y descarga las imágenes con autenticación). */
+  /** Fill the vm with the API detail (and download the images with authentication). */
   async function loadDetail(vm) {
     vm.loading = true;
     vm.loadError = null;
@@ -295,7 +295,7 @@
     return 'ok';
   }
 
-  // ================================================================ render del detalle
+  // ================================================================ detail rendering
 
   const STATUS_DOT = {
     ok: '<span class="dot dot-ok" aria-hidden="true">✓</span>',
@@ -400,7 +400,7 @@
             <div class="dpanel" role="tabpanel">${panel}</div>`;
   }
 
-  // ================================================================ render de tarjetas
+  // ================================================================ card rendering
 
   function statusChip(vm) {
     switch (overallStatus(vm)) {
@@ -432,7 +432,7 @@
     </article>`;
   }
 
-  /** Vuelve a pintar el sitio donde está el vm (tarjeta o fila de admin). */
+  /** Re-render wherever the vm is shown (card or admin row). */
   function render(vm) {
     if (vm.scope === 'admin') {
       const cell = document.querySelector(`[data-admin-detail="${vm.id}"]`);
@@ -502,12 +502,12 @@
     if (vm.open && !vm.loaded && !vm.loading && !vm.running) loadDetail(vm);
   }
 
-  // ================================================================ nueva transformación
+  // ================================================================ new transformation
 
-  /** Idioma de la adaptación: el último elegido o, si no hay, el de la interfaz. */
+  /** Adaptation language: the last one chosen or, if none, the interface language. */
   function defaultOutputLang() {
     let saved = null;
-    try { saved = localStorage.getItem(OUTPUT_LANG_KEY); } catch (_) { /* nada */ }
+    try { saved = localStorage.getItem(OUTPUT_LANG_KEY); } catch (_) { /* ignore */ }
     return I18n.SUPPORTED.includes(saved) ? saved : I18n.lang;
   }
 
@@ -526,11 +526,11 @@
   function updateCharCount() {
     const len = $('enunciado').value.length;
     $('charCount').textContent = t('new.chars', { n: I18n.formatNumber(len) });
-    // Los ejemplos solo se ofrecen con el cuadro vacío: quien ya pega su enunciado no los ve.
+    // Examples are only offered while the box is empty: users pasting their own task never see them.
     $('examples').hidden = len > 0;
   }
 
-  /** Enunciados de ejemplo (uno por nivel), en el idioma elegido para la adaptación. */
+  /** Example task statements (one per level), in the chosen adaptation language. */
   let examplesCache = null;
   async function loadExample(nivel) {
     try {
@@ -559,7 +559,7 @@
     if (!nivel) return showError(t('errors.select_level'), 'newError');
     if (!state.accessToken) { closeNewModal(); return logout(); }
 
-    try { localStorage.setItem(OUTPUT_LANG_KEY, idioma); } catch (_) { /* nada */ }
+    try { localStorage.setItem(OUTPUT_LANG_KEY, idioma); } catch (_) { /* ignore */ }
     closeNewModal();
     $('enunciado').value = '';
     runTransformation(enunciado, nivel, idioma);
@@ -592,7 +592,7 @@
       return;
     }
 
-    // El texto ya está: se muestra y se piden pictogramas e imágenes EN PARALELO
+    // The text is ready: show it and request pictograms and images IN PARALLEL
     Object.assign(vm, {
       id: adapted.transformacion_id, exito: true, idioma: adapted.idioma,
       titulo: titleFromHtml(adapted.enunciado_adaptado), prompt_version: adapted.prompt_version,
@@ -631,12 +631,12 @@
     await Promise.allSettled([pictosJob, imagesJob]);
     Object.assign(vm, { running: false, loaded: true, step: null, duracion_ms: Math.round(performance.now() - started) });
     vm.key = `user-${vm.id}`;
-    // La tarjeta tenía la clave temporal: se pinta de nuevo toda la lista
+    // The card had a temporary key: re-render the whole list
     renderMineList();
     loadStats();
   }
 
-  // ================================================================ idioma
+  // ================================================================ language
 
   function updateLangButtons(lang) {
     document.querySelectorAll('.lang-switch button').forEach(btn => {
@@ -653,13 +653,13 @@
     updateCharCount();
     if (state.currentUser) {
       loadStats();
-      if (state.mineLoaded) renderMineList();      // los textos de la interfaz cambian; el contenido no
+      if (state.mineLoaded) renderMineList();      // interface texts change; the content does not
       state.admin.forEach(render);
       if (state.activeTab === 'admin') { loadUsers(); loadTransformaciones(); }
     }
   }
 
-  // ================================================================ acceso
+  // ================================================================ sign-in
 
   function setGoogleEnabled(enabled) {
     const wrapper = $('googleSigninWrapper');
@@ -747,19 +747,19 @@
     }
   }
 
-  // ================================================================ sesión
+  // ================================================================ session
 
   function saveSession() {
     try {
       localStorage.setItem('access_token', state.accessToken);
       localStorage.setItem('current_user', JSON.stringify(state.currentUser));
-    } catch (_) { /* almacenamiento no disponible */ }
+    } catch (_) { /* storage not available */ }
   }
 
   function clearSession() {
     try {
       ['access_token', 'current_user', 'is_admin_mode'].forEach(k => localStorage.removeItem(k));
-    } catch (_) { /* nada */ }
+    } catch (_) { /* ignore */ }
   }
 
   async function restoreSession() {
@@ -904,9 +904,9 @@
     loadDetail(vm);
   }
 
-  // ================================================================ pestañas de la caja de acceso
+  // ================================================================ sign-in box tabs
 
-  // Vídeo de demostración de YouTube según el idioma de la interfaz
+  // YouTube demo video according to the interface language
   const DEMO_VIDEOS = { es: 'veY3e7kjzFA', en: 'othEd50vC2I' };
   let activeInfoTab = 'acceder';
 
@@ -914,7 +914,7 @@
     const frame = $('demoVideo');
     if (!frame) return;
     if (activeInfoTab !== 'video') {
-      // Al salir de la pestaña se vacía el iframe para que el vídeo deje de sonar
+      // Leaving the tab empties the iframe so the video stops playing
       if (frame.getAttribute('src')) frame.removeAttribute('src');
       return;
     }
@@ -930,7 +930,7 @@
     updateDemoVideo();
   }
 
-  // ================================================================ arranque
+  // ================================================================ startup
 
   function bindEvents() {
     document.querySelectorAll('.lang-switch button').forEach(btn => {
@@ -949,7 +949,7 @@
     });
     document.querySelectorAll('#mainTabs .tab-button').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-    // Delegación para todo lo que se pinta dinámicamente
+    // Event delegation for everything rendered dynamically
     document.addEventListener('click', e => {
       const target = e.target;
       const infoTab = target.closest('[data-info-tab]');

@@ -1,4 +1,4 @@
-"""Adaptación de enunciados a Lectura Educativa con Claude."""
+"""Adaptation of task statements to Educational Reading with Claude."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -39,9 +39,9 @@ async def adaptar_enunciado(enunciado: str, nivel: str | None, max_palabras: int
     texto = str(result.data.get("texto_adaptado") or "").strip()
     explicacion = str(result.data.get("explicacion_cambios") or "").strip()
     if not texto:
-        raise AIResponseError("La respuesta no incluye 'texto_adaptado'")
+        raise AIResponseError("The response does not include 'texto_adaptado'")
     if texto.startswith("{"):
-        raise AIResponseError("'texto_adaptado' contiene JSON en lugar de HTML")
+        raise AIResponseError("'texto_adaptado' contains JSON instead of HTML")
 
     return Adaptacion(
         texto_adaptado=texto,

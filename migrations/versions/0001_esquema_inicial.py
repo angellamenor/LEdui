@@ -1,8 +1,8 @@
-"""Esquema inicial (users + tres tablas de transformaciones).
+"""Initial schema (users + three transformation tables).
 
-Es idempotente: si las tablas ya existen (base de datos creada con la versión
-anterior mediante create_all), no hace nada. Así sirve tanto para una base de
-datos nueva como para la de producción actual.
+Idempotent: if the tables already exist (database created by an earlier version
+through create_all), it does nothing. This makes it valid both for a new
+database and for the existing production one.
 
 Revision ID: 0001
 Revises:
@@ -95,5 +95,5 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    # No se borran datos de producción automáticamente.
+    # Production data is never dropped automatically.
     pass

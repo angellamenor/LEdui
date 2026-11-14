@@ -18,13 +18,13 @@ def _request(headers=None):
 
 @pytest.mark.parametrize("lang", ["es", "en"])
 @pytest.mark.parametrize("name", PROMPT_NAMES)
-def test_todos_los_prompts_existen_en_ambos_idiomas(name, lang):
+def test_all_prompts_exist_in_both_languages(name, lang):
     tpl = prompts.get(name, lang)
     assert tpl.text.strip()
     assert f"/{lang}/" in tpl.source
 
 
-def test_render_sustituye_variables_y_respeta_json():
+def test_render_replaces_placeholders_and_keeps_json():
     texto = prompts.render("adaptar_user", "es", nivel="FP", max_palabras=300,
                            enunciado="Haz X", idioma_nombre="español")
     assert "Nivel educativo: FP" in texto and "Haz X" in texto and "{{" not in texto
@@ -32,17 +32,17 @@ def test_render_sustituye_variables_y_respeta_json():
     assert '"texto_adaptado"' in system and "in English" in system
 
 
-def test_override_por_variable_de_entorno(monkeypatch):
+def test_override_with_environment_variable(monkeypatch):
     monkeypatch.setenv("PROMPT_ADAPTAR_USER_EN", "Custom {{enunciado}}")
     prompts.reload()
     tpl = prompts.get("adaptar_user", "en")
     assert tpl.source == "env:PROMPT_ADAPTAR_USER_EN"
     assert tpl.render(enunciado="hi") == "Custom hi"
-    # el otro idioma no se ve afectado
+    # the other language is not affected
     assert prompts.get("adaptar_user", "es").source.startswith("file:")
 
 
-def test_override_por_fichero(monkeypatch, tmp_path):
+def test_override_with_file(monkeypatch, tmp_path):
     f = tmp_path / "mio.md"
     f.write_text("Desde fichero {{enunciado}}", encoding="utf-8")
     monkeypatch.setenv("PROMPT_PICTOGRAMAS_USER_ES_FILE", str(f))
@@ -50,8 +50,8 @@ def test_override_por_fichero(monkeypatch, tmp_path):
     assert prompts.render("pictogramas_user", "es", enunciado="E") == "Desde fichero E"
 
 
-def test_carpeta_de_experimento_parcial(monkeypatch, tmp_path):
-    """Una carpeta PROMPTS_DIR con solo un prompt usa los incluidos para el resto."""
+def test_partial_experiment_folder(monkeypatch, tmp_path):
+    """A PROMPTS_DIR folder with a single prompt falls back to the built-in ones for the rest."""
     (tmp_path / "es").mkdir()
     (tmp_path / "es" / "adaptar_system.md").write_text("EXPERIMENTO", encoding="utf-8")
     monkeypatch.setenv("PROMPTS_DIR", str(tmp_path))
@@ -67,7 +67,7 @@ def test_carpeta_de_experimento_parcial(monkeypatch, tmp_path):
         prompts.reload()
 
 
-def test_version_cambia_con_el_prompt_y_admite_nombre(monkeypatch):
+def test_version_changes_with_prompt_and_accepts_set_name(monkeypatch):
     v1 = prompts.version(["adaptar_system", "adaptar_user"], "es")
     monkeypatch.setenv("PROMPT_ADAPTAR_SYSTEM_ES", "otro")
     prompts.reload()
@@ -92,18 +92,18 @@ def test_hot_reload(monkeypatch, tmp_path):
         get_settings.cache_clear()
 
 
-# ---------------------------------------------------------------- idioma
+# ---------------------------------------------------------------- language
 
-def test_resolver_idioma():
+def test_resolve_language():
     assert resolve_language("en") == "en"
     assert resolve_language("EN-gb") == "en"
-    assert resolve_language("fr") == "es"  # no soportado -> por defecto
+    assert resolve_language("fr") == "es"  # unsupported -> default
     assert resolve_language(None, _request({"Accept-Language": "en-US,en;q=0.9"})) == "en"
     assert resolve_language(None, _request({"Accept-Language": "fr-FR,en;q=0.5"})) == "en"
     assert resolve_language(None, _request()) == "es"
 
 
-def test_mensajes_y_niveles():
+def test_messages_and_levels():
     assert t("error.enunciado_corto", "en").startswith("The task")
     assert t("fallback.vas_a", "es", accion="leer") == "Vas a leer."
     assert normalize_nivel("Vocational Training") == "fp"
@@ -113,17 +113,17 @@ def test_mensajes_y_niveles():
 
 # ---------------------------------------------------------------- JSON
 
-def test_extraer_json_con_bloque_de_codigo_y_llaves_en_texto():
+def test_extract_json_with_code_fence_and_braces_in_text():
     raw = 'Aquí va:\n```json\n{"texto_adaptado": "<p>usa {llaves}</p>", "n": {"a": 1}}\n```'
     assert extract_json_object(raw)["n"] == {"a": 1}
 
 
-def test_extraer_json_incompleto():
+def test_extract_incomplete_json():
     with pytest.raises(AIResponseError):
         extract_json_object('{"texto_adaptado": "cortado')
 
 
-def test_traducciones_frontend_tienen_las_mismas_claves():
+def test_frontend_translations_have_same_keys():
     import json
     base = Path(__file__).resolve().parent.parent / "static" / "i18n"
     es = json.loads((base / "es.json").read_text(encoding="utf-8"))
